@@ -7,21 +7,21 @@ ini_set('error_reporting', E_ALL);
 ini_set("display_startup_errors","1");
 define('PUN_ROOT', './');
 require PUN_ROOT.'include/common.php';
-$options = unserialize($pun_config['o_ds_user_stats']);
-(isset($options['ent_per_page']) ? $options['ent_per_page']:$options['ent_per_page'] = 50);
+$ds_stats_conf = unserialize($pun_config['o_ds_user_stats']);
+(isset($ds_stats_conf['ent_per_page']) ? $ds_stats_conf['ent_per_page']:$ds_stats_conf['ent_per_page'] = 50);
 require PUN_ROOT.'include/userstats/english_country.php';	// Load the language country vars
 $multibyte = (isset($lang_common['lang_multibyte']) && $lang_common['lang_multibyte']) ? true : false;	// Detect two byte character sets
 $page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), 'User stats');
 require PUN_ROOT.'header.php';
-if(($pun_user['g_id'] == PUN_GUEST && $options['perm_guests'] == "0")||($pun_user['g_id'] > PUN_MOD && $options['perm_users'] == "0")||($pun_user['g_id'] == PUN_MOD && $options['perm_mods'] == "0"))
+if(($pun_user['g_id'] == PUN_GUEST && $ds_stats_conf['perm_guests'] == "0")||($pun_user['g_id'] > PUN_MOD && $ds_stats_conf['perm_users'] == "0")||($pun_user['g_id'] == PUN_MOD && $ds_stats_conf['perm_mods'] == "0"))
 	message($lang_common['No permission']);
 
 // Pull userstats
-$result = $db->query('SELECT * FROM '.$db->prefix.'userstats ORDER BY date '.$options['sort_order']) or error('Unable to fetch userstats for forum', __FILE__, __LINE__, $db->error());
+$result = $db->query('SELECT * FROM '.$db->prefix.'userstats ORDER BY date '.$ds_stats_conf['sort_order']) or error('Unable to fetch userstats for forum', __FILE__, __LINE__, $db->error());
 $num_entries_count = $db->num_rows($result);	// Count entries
 
 // Determine the post offset (based on $_GET['p'])
-$num_pages = ceil($num_entries_count / $options['ent_per_page']);
+$num_pages = ceil($num_entries_count / $ds_stats_conf['ent_per_page']);
 $p = (!isset($_GET['p']) || $_GET['p'] <= 1 || $_GET['p'] > $num_pages) ? 1 : $_GET['p'];
 
 //============= START ALT =============
@@ -32,17 +32,17 @@ $tdiff = ($pun_user['timezone'] - $pun_config['o_server_timezone']) * 3600;
 
 if ($p > 1)
 {
-	$h1 = ($p-1)*$options['ent_per_page'];
+	$h1 = ($p-1)*$ds_stats_conf['ent_per_page'];
 	$h2 = $h1 + 1;
 	// Pull userstats
-	$result2 = $db->query('SELECT * FROM '.$db->prefix.'userstats ORDER BY date '.$options['sort_order'].' LIMIT '.$h1.','.$h2,'') or error('Unable to fetch userstats for forum', __FILE__, __LINE__, $db->error());
+	$result2 = $db->query('SELECT * FROM '.$db->prefix.'userstats ORDER BY date '.$ds_stats_conf['sort_order'].' LIMIT '.$h1.','.$h2,'') or error('Unable to fetch userstats for forum', __FILE__, __LINE__, $db->error());
 	$stat_data = $db->fetch_assoc($result2);
 	$stat_nr = $stat_data['date']+$tdiff;
 	$stat_nr = date("Y-m-d",$stat_nr);
 
 	// Pull userstats
 	$result2 = $db->query('SELECT DISTINCT FROM_UNIXTIME(date+'.$tdiff.', \'%Y-%m-%d\') as timestamp FROM '.$db->prefix.'userstats 
-		WHERE FROM_UNIXTIME(date+'.$tdiff.', \'%Y-%m-%d\') >= \''.$stat_nr.'\' ORDER BY timestamp '.$options['sort_order'].'
+		WHERE FROM_UNIXTIME(date+'.$tdiff.', \'%Y-%m-%d\') >= \''.$stat_nr.'\' ORDER BY timestamp '.$ds_stats_conf['sort_order'].'
 		') or error('Unable to fetch alternate days list for forum', __FILE__, __LINE__, $db->error());
 
 	// Count entries
@@ -53,7 +53,7 @@ if ($p > 1)
 
 // Generate paging links
 $paging_links = $lang_common['Pages'].': '.paginate($num_pages, $p, 'userstats.php?disp=1');
-if ($num_entries_count < $options['ent_in_database'])
+if ($num_entries_count < $ds_stats_conf['ent_in_database'])
 	$num_displayed = " (".$num_entries_count." displayed)";
 else
 	$num_displayed = "";
@@ -67,7 +67,7 @@ else
 	<div class="blocktable">
 		<div class="box">
 		<div class="inbox">
-	<h2><span>User stats - last <?php echo $options['ent_in_database'] ?> visitors<?php echo $num_displayed ?></span></h2>
+	<h2><span>User stats - last <?php echo $ds_stats_conf['ent_in_database'] ?> visitors<?php echo $num_displayed ?></span></h2>
 <?php
 echo "
 <table cellspacing='0'>
@@ -91,7 +91,7 @@ if($db->num_rows($result))
 	while ($cur_entry = $db->fetch_assoc($result))
 	{
 		++$entry_count;
-		if (($entry_count >= ((($p-1)*$options['ent_per_page']) + 1)) && ($entry_count < (($p*$options['ent_per_page']) + 1)))
+		if (($entry_count >= ((($p-1)*$ds_stats_conf['ent_per_page']) + 1)) && ($entry_count < (($p*$ds_stats_conf['ent_per_page']) + 1)))
 		{
 			$merkdit = 1;
 			if (substr($cur_entry['username'], 0, 5) == 'Guest') $merkdit = 0;
@@ -131,12 +131,12 @@ if($db->num_rows($result))
 			$uri_title = htmlspecialchars($uri_title);
 ?>
 		<tr>
-			<td class="tc3"<?php echo " style='BORDER-LEFT-WIDTH:4px;BORDER-LEFT-COLOR: ".$day_color.";"; if ($merkdit == 1) {echo "BACKGROUND-COLOR: #".$options['highlight_users'];} else if ($merkdit == 2)	{echo "BACKGROUND-COLOR: #".$options['highlight_bots'];}  echo "'"; ?>><?php if ($cur_entry['uri'] != 'unknown') echo '<a href="'.$uri.'">'; ?><img src="img/world_link.png" alt="<?php echo $uri_title ?>" title="<?php echo $uri_title ?>" /><?php if ($cur_entry['uri'] != 'unknown') echo '</a>'; ?>&nbsp;<?php echo format_time($cur_entry['date']) ?></td>
-			<td class="tcr"<?php if ($merkdit == 1)	{echo " style='background-color: #".$options['highlight_users']."'";} else if ($merkdit == 2)	{echo " style='background-color: #".$options['highlight_bots']."'";} ?>><?php echo $cur_entry['username'] ?></td>
-			<td class="tc3"<?php if ($merkdit == 1) {echo " style='background-color: #".$options['highlight_users']."'";} else if ($merkdit == 2)	{echo " style='background-color: #".$options['highlight_bots']."'";}  ?>><?php echo $cur_entry['userip'] ?></td>
-			<td class="tc3"<?php if ($merkdit == 1) {echo " style='background-color: #".$options['highlight_users']."'";} else if ($merkdit == 2)	{echo " style='background-color: #".$options['highlight_bots']."'";}  ?>><?php echo $browser ?></td>
-			<td class="tc3"<?php if ($merkdit == 1) {echo " style='background-color: #".$options['highlight_users']."'";} else if ($merkdit == 2)	{echo " style='background-color: #".$options['highlight_bots']."'";}  ?>><?php echo $opsys ?></td>
-			<td class="tc3"<?php if ($merkdit == 1) {echo " style='background-color: #".$options['highlight_users']."'";} else if ($merkdit == 2)	{echo " style='background-color: #".$options['highlight_bots']."'";}  ?>><?php echo $country ?></td>
+			<td class="tc3"<?php echo " style='BORDER-LEFT-WIDTH:4px;BORDER-LEFT-COLOR: ".$day_color.";"; if ($merkdit == 1) {echo "BACKGROUND-COLOR: #".$ds_stats_conf['highlight_users'];} else if ($merkdit == 2)	{echo "BACKGROUND-COLOR: #".$ds_stats_conf['highlight_bots'];}  echo "'"; ?>><?php if ($cur_entry['uri'] != 'unknown') echo '<a href="'.$uri.'">'; ?><img src="img/world_link.png" alt="<?php echo $uri_title ?>" title="<?php echo $uri_title ?>" /><?php if ($cur_entry['uri'] != 'unknown') echo '</a>'; ?>&nbsp;<?php echo format_time($cur_entry['date']) ?></td>
+			<td class="tcr"<?php if ($merkdit == 1)	{echo " style='background-color: #".$ds_stats_conf['highlight_users']."'";} else if ($merkdit == 2)	{echo " style='background-color: #".$ds_stats_conf['highlight_bots']."'";} ?>><?php echo $cur_entry['username'] ?></td>
+			<td class="tc3"<?php if ($merkdit == 1) {echo " style='background-color: #".$ds_stats_conf['highlight_users']."'";} else if ($merkdit == 2)	{echo " style='background-color: #".$ds_stats_conf['highlight_bots']."'";}  ?>><?php echo $cur_entry['userip'] ?></td>
+			<td class="tc3"<?php if ($merkdit == 1) {echo " style='background-color: #".$ds_stats_conf['highlight_users']."'";} else if ($merkdit == 2)	{echo " style='background-color: #".$ds_stats_conf['highlight_bots']."'";}  ?>><?php echo $browser ?></td>
+			<td class="tc3"<?php if ($merkdit == 1) {echo " style='background-color: #".$ds_stats_conf['highlight_users']."'";} else if ($merkdit == 2)	{echo " style='background-color: #".$ds_stats_conf['highlight_bots']."'";}  ?>><?php echo $opsys ?></td>
+			<td class="tc3"<?php if ($merkdit == 1) {echo " style='background-color: #".$ds_stats_conf['highlight_users']."'";} else if ($merkdit == 2)	{echo " style='background-color: #".$ds_stats_conf['highlight_bots']."'";}  ?>><?php echo $country ?></td>
 		</tr>
 <?php
 		}
@@ -155,6 +155,6 @@ if($db->num_rows($result))
 	</div>
 </div>
 <?php
-echo '<pre>'; var_dump( $options); echo '</pre>';
+echo '<pre>'; var_dump( $ds_stats_conf); echo '</pre>';
 require PUN_ROOT.'footer.php';
 ?>

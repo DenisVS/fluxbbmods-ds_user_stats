@@ -10,9 +10,9 @@
 
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 define('PUN_ROOT', './');
-$options = unserialize($pun_config['o_ds_user_stats']);
+$ds_stats_conf = unserialize($pun_config['o_ds_user_stats']);
 
-if (isset($options['IP'][$_SERVER ['REMOTE_ADDR']])) $stopLog = true;
+if (isset($ds_stats_conf['IP'][$_SERVER ['REMOTE_ADDR']])) $stopLog = true;
 
 if ($pun_user['username'] == 'Guest')
 {
@@ -25,15 +25,15 @@ if ($pun_user['username'] == 'Guest')
   } 
 } 
 
-if ($options['stats_enabled'])
+if ($ds_stats_conf['stats_enabled'])
 {
 	if ($searchengine) 
 	{	
-		if (isset($options['bots'][$searchengine])) {
-			if ($options['bots'][$searchengine] == 0) {$stopLog = true;}
+		if (isset($ds_stats_conf['bots'][$searchengine])) {
+			if ($ds_stats_conf['bots'][$searchengine] == 0) {$stopLog = true;}
 		} else {
-			if (isset($options['otherBots'])) {
-				if ($options['otherBots'] == 0)	{$stopLog = true;}
+			if (isset($ds_stats_conf['otherBots'])) {
+				if ($ds_stats_conf['otherBots'] == 0)	{$stopLog = true;}
 			}
 		}
 
@@ -74,9 +74,9 @@ if ($options['stats_enabled'])
 		$country = $countryData['country_name'] .", ". $countryData['city'];
 		$result = $db->query('SELECT id FROM '.$db->prefix.'userstats ') or error('Unable to fetch userstats list for forum', __FILE__, __LINE__, $db->error());
 		$num_entries_count = $db->num_rows($result);
-		if ($num_entries_count > $options['ent_in_database'])
+		if ($num_entries_count > $ds_stats_conf['ent_in_database'])
 		{
-			// Let's delete the older entries so that there are only $options['ent_in_database']
+			// Let's delete the older entries so that there are only $ds_stats_conf['ent_in_database']
 			// Pull userstats
 			$result = $db->query('SELECT * FROM '.$db->prefix.'userstats ORDER BY date DESC ') or error('Unable to fetch userstats for forum', __FILE__, __LINE__, $db->error());
 			// Output file info
@@ -86,7 +86,7 @@ if ($options['stats_enabled'])
 				while ($cur_entry = $db->fetch_assoc($result))
 				{
 					++$entry_count;
-					if ($entry_count == $options['ent_in_database'])
+					if ($entry_count == $ds_stats_conf['ent_in_database'])
 					{
 						$del_date = $cur_entry['date'];
 						break;
@@ -117,7 +117,7 @@ if ($options['stats_enabled'])
 			)
 		{
 			// Log it
-			if ($num_entries_count > ($options['ent_in_database']-1))
+			if ($num_entries_count > ($ds_stats_conf['ent_in_database']-1))
 			{
 				// Get minimum date's id
 				$result = $db->query('SELECT id, min(date) as min_date FROM '.$db->prefix.'userstats GROUP BY id ORDER BY min_date ') or error('Unable to fetch diary info', __FILE__, __LINE__, $db->error());

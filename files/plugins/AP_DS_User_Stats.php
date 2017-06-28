@@ -31,17 +31,17 @@ if (isset($_POST['add_bots']))
 {
   //$result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_user_stats\'' );
   //$data = $db->fetch_assoc($result);
-  //$options = unserialize($data['conf_value']);
-  $options = unserialize($pun_config['o_ds_user_stats']);
-  //echo '<pre>'; var_dump ($options); echo '</pre><br /><br /><br /><br />';
+  //$ds_stats_conf = unserialize($data['conf_value']);
+  $ds_stats_conf = unserialize($pun_config['o_ds_user_stats']);
+  //echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre><br /><br /><br /><br />';
   foreach ($_POST['newBots']  as $botNUM => $botName)  
   {
-    $options['bots'][$botName] = true;
+    $ds_stats_conf['bots'][$botName] = true;
   }
-  //echo '<pre>'; var_dump ($options); echo '</pre>';
+  //echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
 	$db->query('INSERT INTO '.$db->prefix.'config 
-	(conf_name, conf_value) VALUES (\'o_ds_user_stats\', \''.serialize($options).'\') 
-	ON DUPLICATE KEY UPDATE conf_value=\''.serialize($options).'\'') or error('Unable to update config', __FILE__, __LINE__, $db->error());
+	(conf_name, conf_value) VALUES (\'o_ds_user_stats\', \''.serialize($ds_stats_conf).'\') 
+	ON DUPLICATE KEY UPDATE conf_value=\''.serialize($ds_stats_conf).'\'') or error('Unable to update config', __FILE__, __LINE__, $db->error());
 
 if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
     require PUN_ROOT.'include/cache.php';
@@ -58,16 +58,16 @@ if (isset($_POST['delete_bots']))
 {
   $result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_user_stats\'' );
   $data = $db->fetch_assoc($result);
-  $options = unserialize($data['conf_value']);
-  //echo '<pre>'; var_dump ($options); echo '</pre><br /><br /><br /><br />';
+  $ds_stats_conf = unserialize($data['conf_value']);
+  //echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre><br /><br /><br /><br />';
   foreach ($_POST['existBots']  as $botNUM => $botName)  
   {
-    unset ($options['bots'][$botName]);
+    unset ($ds_stats_conf['bots'][$botName]);
   }
-  //echo '<pre>'; var_dump ($options); echo '</pre>';
+  //echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
 	$db->query('INSERT INTO '.$db->prefix.'config 
-	(conf_name, conf_value) VALUES (\'o_ds_user_stats\', \''.serialize($options).'\') 
-	ON DUPLICATE KEY UPDATE conf_value=\''.serialize($options).'\'') or error('Unable to update config', __FILE__, __LINE__, $db->error());
+	(conf_name, conf_value) VALUES (\'o_ds_user_stats\', \''.serialize($ds_stats_conf).'\') 
+	ON DUPLICATE KEY UPDATE conf_value=\''.serialize($ds_stats_conf).'\'') or error('Unable to update config', __FILE__, __LINE__, $db->error());
 	
 	if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
     require PUN_ROOT.'include/cache.php';
@@ -86,36 +86,36 @@ if (isset($_POST['save_options']))
 
   $result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_user_stats\'' );
   $data = $db->fetch_assoc($result);
-  $options = unserialize($data['conf_value']);
+  $ds_stats_conf = unserialize($data['conf_value']);
 
-	$options['stats_enabled'] = (isset($_POST["modStatus"]) ? $_POST["modStatus"] : 0);
-	$options['ent_per_page'] = (isset($_POST["entPerPage"]) ? $_POST["entPerPage"] : 0);
-	$options['ent_in_database'] = (isset($_POST["maxEntries"]) ? $_POST["maxEntries"] : 0);
-	$options['highlight_users'] = (isset($_POST["highlightUser"]) ? $_POST["highlightUser"] : 0);
-	$options['highlight_bots'] = (isset($_POST["highlightBot"]) ? $_POST["highlightBot"] : 0);
-	$options['sort_order'] = (isset($_POST["sortOrder"][0]) ? $_POST["sortOrder"][0] : 'DESC');
-	$options['perm_guests'] = (isset($_POST["permGuests"]) ? $_POST["permGuests"] : 0);
-	$options['perm_users'] = (isset($_POST["permUsers"]) ? $_POST["permUsers"] : 0);
-	$options['perm_mods'] = (isset($_POST["permModerators"]) ? $_POST["permModerators"] : 0);
-	$options['otherBots'] = (isset($_POST["otherBots"]) ? $_POST["otherBots"] : 0);
+	$ds_stats_conf['stats_enabled'] = (isset($_POST["modStatus"]) ? $_POST["modStatus"] : 0);
+	$ds_stats_conf['ent_per_page'] = (isset($_POST["entPerPage"]) ? $_POST["entPerPage"] : 0);
+	$ds_stats_conf['ent_in_database'] = (isset($_POST["maxEntries"]) ? $_POST["maxEntries"] : 0);
+	$ds_stats_conf['highlight_users'] = (isset($_POST["highlightUser"]) ? $_POST["highlightUser"] : 0);
+	$ds_stats_conf['highlight_bots'] = (isset($_POST["highlightBot"]) ? $_POST["highlightBot"] : 0);
+	$ds_stats_conf['sort_order'] = (isset($_POST["sortOrder"][0]) ? $_POST["sortOrder"][0] : 'DESC');
+	$ds_stats_conf['perm_guests'] = (isset($_POST["permGuests"]) ? $_POST["permGuests"] : 0);
+	$ds_stats_conf['perm_users'] = (isset($_POST["permUsers"]) ? $_POST["permUsers"] : 0);
+	$ds_stats_conf['perm_mods'] = (isset($_POST["permModerators"]) ? $_POST["permModerators"] : 0);
+	$ds_stats_conf['otherBots'] = (isset($_POST["otherBots"]) ? $_POST["otherBots"] : 0);
 	$ips = (isset($_POST["IP"]) ? $_POST["IP"] : false);
 	$ips =   str_replace  ("\r", "\n", trim ($ips));
 	$ips =   str_replace  ("\n", ' ', trim ($ips));
 	$ips = preg_replace("/\s+/", " ", $ips);
 	$ips =   explode(' ', trim ($ips));
-	unset ($options['IP']);
-	foreach ($ips as $ip)	{$options['IP'][$ip] = true;}
+	unset ($ds_stats_conf['IP']);
+	foreach ($ips as $ip)	{$ds_stats_conf['IP'][$ip] = true;}
 
-if (isset ($options["bots"]))
+if (isset ($ds_stats_conf["bots"]))
 {
-  foreach ($options["bots"] as $botName => $botStatus)	{$options["bots"][$botName] = (isset($_POST["botName"][$botName])) ? 1 : 0;}
+  foreach ($ds_stats_conf["bots"] as $botName => $botStatus)	{$ds_stats_conf["bots"][$botName] = (isset($_POST["botName"][$botName])) ? 1 : 0;}
 } 
-//  (isset ($options["bots"]) ? foreach ($options["bots"] as $botName => $botStatus)	{$options["bots"][$botName] = (isset($_POST["botName"][$botName])) ? 1 : 0;}:0);
- //(isset($options["bots"]) foreach ($options["bots"] as $botName => $botStatus)	{$options["bots"][$botName] = (isset($_POST["botName"][$botName])) ? 1 : 0;}  : 0);
+//  (isset ($ds_stats_conf["bots"]) ? foreach ($ds_stats_conf["bots"] as $botName => $botStatus)	{$ds_stats_conf["bots"][$botName] = (isset($_POST["botName"][$botName])) ? 1 : 0;}:0);
+ //(isset($ds_stats_conf["bots"]) foreach ($ds_stats_conf["bots"] as $botName => $botStatus)	{$ds_stats_conf["bots"][$botName] = (isset($_POST["botName"][$botName])) ? 1 : 0;}  : 0);
 
 	$result = $db->query('INSERT INTO '.$db->prefix.'config 
-	(conf_name, conf_value) VALUES (\'o_ds_user_stats\', \''.preg_replace('~\R~u', "\n", trim(serialize($options))).'\') 
-	ON DUPLICATE KEY UPDATE conf_value=\''.preg_replace('~\R~u', "\n", trim(serialize($options))).'\'') or error('Unable to update config', __FILE__, __LINE__, $db->error());
+	(conf_name, conf_value) VALUES (\'o_ds_user_stats\', \''.preg_replace('~\R~u', "\n", trim(serialize($ds_stats_conf))).'\') 
+	ON DUPLICATE KEY UPDATE conf_value=\''.preg_replace('~\R~u', "\n", trim(serialize($ds_stats_conf))).'\'') or error('Unable to update config', __FILE__, __LINE__, $db->error());
 
 if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
     require PUN_ROOT.'include/cache.php';
@@ -123,7 +123,7 @@ if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
 // Regenerate the config cache
 generate_config_cache();
 
-	 echo '<pre>'; var_dump ($options); echo '</pre>';
+	 echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
 	redirect('admin_loader.php?plugin=AP_DS_User_Stats.php','Settings Saved, Redirecting &hellip;');
 	die();
 }
@@ -148,8 +148,8 @@ generate_config_cache();
 
 $result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_user_stats\'' );
 $data = $db->fetch_assoc($result);
-$options = unserialize($data['conf_value']);
-//echo '<pre>'; var_dump ($options); echo '</pre>';
+$ds_stats_conf = unserialize($data['conf_value']);
+//echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
 //echo '<pre>'; var_dump ($pun_config); echo '</pre>';
 
 // Get robots from log
@@ -159,7 +159,7 @@ while ($cur_entry = $db->fetch_assoc($result))
 	$robotsList[$cur_entry['username']] = 1;
 }
 
-if (isset($options['IP']))	{foreach ($options['IP'] as $ip => $key)	{$ipList =  $ipList.$ip. PHP_EOL;}}
+if (isset($ds_stats_conf['IP']))	{foreach ($ds_stats_conf['IP'] as $ip => $key)	{$ipList =  $ipList.$ip. PHP_EOL;}}
 
 ?>
  
@@ -174,7 +174,7 @@ if (isset($options['IP']))	{foreach ($options['IP'] as $ip => $key)	{$ipList =  
 								<tr>
 									<th scope="row"><?php echo $lang_admin_DS_User_Stats['Enable mod'] ?></th>
 									<td>
-										<input type="checkbox" name="modStatus" id="ourFormId1" title="Our title" value="1" <?php echo((isset($options['stats_enabled'])) ? (($options['stats_enabled'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> Плагин включен
+										<input type="checkbox" name="modStatus" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['stats_enabled'])) ? (($ds_stats_conf['stats_enabled'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> Плагин включен
 									</td>
 								</tr>
 							</table>
@@ -191,28 +191,28 @@ if (isset($options['IP']))	{foreach ($options['IP'] as $ip => $key)	{$ipList =  
 								<tr>
 									<th scope="row"><?php echo $lang_admin_DS_User_Stats['Max entries'] ?></th>
 									<td>
-										<input type="text" name="maxEntries" id="ourFormId1" title="Our title" value="<?php echo((isset($options['ent_in_database'])) ? ($options['ent_in_database'] ) : '150'); ?>"/> Maximum number of log entries to be stored in the database.
+										<input type="text" name="maxEntries" id="ourFormId1" title="Our title" value="<?php echo((isset($ds_stats_conf['ent_in_database'])) ? ($ds_stats_conf['ent_in_database'] ) : '150'); ?>"/> Maximum number of log entries to be stored in the database.
 									</td>
 								</tr>
 
 								<tr>
 									<th scope="row"><?php echo $lang_admin_DS_User_Stats['Entries per page'] ?></th>
 									<td>
-										<input type="text" name="entPerPage" id="ourFormId1" title="Our title" value="<?php echo((isset($options['ent_per_page'])) ? ($options['ent_per_page'] ) : '50'); ?>"/> Entries per page
+										<input type="text" name="entPerPage" id="ourFormId1" title="Our title" value="<?php echo((isset($ds_stats_conf['ent_per_page'])) ? ($ds_stats_conf['ent_per_page'] ) : '50'); ?>"/> Entries per page
 									</td>
 								</tr>
 
 								<tr>
 									<th scope="row"><?php echo $lang_admin_DS_User_Stats['Highlight user'] ?></th>
 									<td>
-										<input name="highlightUser" class="jscolor" value="<?php echo((isset($options['highlight_users'])) ? ($options['highlight_users'] ) : 'FFFF00'); ?>"> Highlight color for registered users.
+										<input name="highlightUser" class="jscolor" value="<?php echo((isset($ds_stats_conf['highlight_users'])) ? ($ds_stats_conf['highlight_users'] ) : 'FFFF00'); ?>"> Highlight color for registered users.
 									</td>
 								</tr>
 
 								<tr>
 									<th scope="row"><?php echo $lang_admin_DS_User_Stats['Highlight bot'] ?></th>
 									<td>
-										<input name="highlightBot" class="jscolor" value="<?php echo((isset($options['highlight_bots'])) ? ($options['highlight_bots'] ) : '99EECC'); ?>"> Highlight color for bots.
+										<input name="highlightBot" class="jscolor" value="<?php echo((isset($ds_stats_conf['highlight_bots'])) ? ($ds_stats_conf['highlight_bots'] ) : '99EECC'); ?>"> Highlight color for bots.
 									</td>
 								</tr>
 
@@ -221,8 +221,8 @@ if (isset($options['IP']))	{foreach ($options['IP'] as $ip => $key)	{$ipList =  
 									<td>
 										
 										<select name="sortOrder[]">
-    <option <?php echo((isset($options['sort_order'])) ? (($options['sort_order'] == 'DESC') ? false : 'selected' ) : false); ?> value="ASC"><?php echo $lang_admin_DS_User_Stats['Ascending'] ?></option>
-    <option <?php echo((isset($options['sort_order'])) ? (($options['sort_order'] == 'DESC') ? 'selected' : false ) : 'selected'); ?> value="DESC"><?php echo $lang_admin_DS_User_Stats['Descending'] ?></option>
+    <option <?php echo((isset($ds_stats_conf['sort_order'])) ? (($ds_stats_conf['sort_order'] == 'DESC') ? false : 'selected' ) : false); ?> value="ASC"><?php echo $lang_admin_DS_User_Stats['Ascending'] ?></option>
+    <option <?php echo((isset($ds_stats_conf['sort_order'])) ? (($ds_stats_conf['sort_order'] == 'DESC') ? 'selected' : false ) : 'selected'); ?> value="DESC"><?php echo $lang_admin_DS_User_Stats['Descending'] ?></option>
    </select>
 									</td>
 								</tr>
@@ -231,19 +231,19 @@ if (isset($options['IP']))	{foreach ($options['IP'] as $ip => $key)	{$ipList =  
 								<tr>
 									<th scope="row"><?php echo $lang_admin_DS_User_Stats['Guests'] ?></th>
 									<td>
-										<input type="checkbox" name="permGuests" id="ourFormId1" title="Our title" value="1" <?php echo((isset($options['perm_guests'])) ? (($options['perm_guests'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> Плагин включен
+										<input type="checkbox" name="permGuests" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['perm_guests'])) ? (($ds_stats_conf['perm_guests'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> Плагин включен
 									</td>
 								</tr>
 								<tr>
 									<th scope="row"><?php echo $lang_admin_DS_User_Stats['Users'] ?></th>
 									<td>
-										<input type="checkbox" name="permUsers" id="ourFormId1" title="Our title" value="1" <?php echo((isset($options['perm_users'])) ? (($options['perm_users'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> Плагин включен
+										<input type="checkbox" name="permUsers" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['perm_users'])) ? (($ds_stats_conf['perm_users'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> Плагин включен
 									</td>
 								</tr>
 								<tr>
 									<th scope="row"><?php echo $lang_admin_DS_User_Stats['Moderators'] ?></th>
 									<td>
-										<input type="checkbox" name="permModerators" id="ourFormId1" title="Our title" value="1" <?php echo((isset($options['perm_mods'])) ? (($options['perm_mods'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> Плагин включен
+										<input type="checkbox" name="permModerators" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['perm_mods'])) ? (($ds_stats_conf['perm_mods'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> Плагин включен
 									</td>
 								</tr>
 								
@@ -264,8 +264,8 @@ if (isset($options['IP']))	{foreach ($options['IP'] as $ip => $key)	{$ipList =  
 							<table class="aligntop" cellspacing="0">
 
 <?php
-if (isset($options['bots']))	{
-foreach ($options['bots'] as $botName => $botStatus) {
+if (isset($ds_stats_conf['bots']))	{
+foreach ($ds_stats_conf['bots'] as $botName => $botStatus) {
   //echo $botName . $botStatus;
 ?>
 
@@ -284,7 +284,7 @@ foreach ($options['bots'] as $botName => $botStatus) {
 								<tr>
 									<th scope="row">Others bots</th>
 									<td>
-										<input type="checkbox" name="otherBots" id="ourFormId1" title="Our title" value="1" <?php echo((isset($options['otherBots'])) ? (($options['otherBots'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> <?php echo $lang_admin_DS_User_Stats['Log from'] .' '; ?> others.
+										<input type="checkbox" name="otherBots" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['otherBots'])) ? (($ds_stats_conf['otherBots'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> <?php echo $lang_admin_DS_User_Stats['Log from'] .' '; ?> others.
 									</td>
 								</tr>
 							</table>
@@ -313,7 +313,7 @@ foreach ($options['bots'] as $botName => $botStatus) {
 
 <?php	//Check if bot from log in our list, we unset it
 foreach ($robotsList as $botName => $botStatus) {	
-	if  (isset($options['bots'][$botName]))
+	if  (isset($ds_stats_conf['bots'][$botName]))
 	{
 		unset ($robotsList[$botName]);
 	}
@@ -350,7 +350,7 @@ foreach ($robotsList as $botName => $botStatus) {	?>
 
 <?php 
 }
-if (sizeof($options['bots']) >0 ) { ?>
+if (sizeof($ds_stats_conf['bots']) >0 ) { ?>
 			<form id="example" method="post" action="<?php echo pun_htmlspecialchars($_SERVER['REQUEST_URI']) ?>&amp;action=deleteBots">
 				<div class="inform">
 					<fieldset>
@@ -362,7 +362,7 @@ if (sizeof($options['bots']) >0 ) { ?>
 									<td>
 										<select multiple name="existBots[]">
 <?php
-foreach ($options['bots'] as $botName => $botStatus) {
+foreach ($ds_stats_conf['bots'] as $botName => $botStatus) {
 ?>
                       <option  value="<?php echo $botName; ?>"><?php echo $botName; ?></option>
 <?php } ?>
