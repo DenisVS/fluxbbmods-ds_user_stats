@@ -298,15 +298,18 @@ if ($pun_config['o_users_online'] == '1')
 	if (count($users_today) > 0) 
 		echo "\t\t\t".'<dl id="onlinelist" class="clearb">'."\n\t\t\t\t".'<dt>'.$lang_usersonline['Online today'].': </dt>'.implode(',</dd> ', $users_today).'</dd>'."\n\t\t\t".'</dl>'."\n";
 
-	echo '			<div style="TEXT-ALIGN: center; FONT-SIZE: 0.8em"><hr size="1" style="margin:0;">';
-	echo "\t\t\t\t".$lang_usersonline['Legend'].' ';
-	$result = $db->query('SELECT g_id, g_title FROM '.$db->prefix.'groups WHERE g_id != 3 ORDER BY g_id') or error('Unable to fetch user group list', __FILE__, __LINE__, $db->error());
-	while ($cur_group = $db->fetch_assoc($result))
+	if (isset($ds_stats_conf['show_legend'][$pun_user['group_id']]) && $ds_stats_conf['show_legend'][$pun_user['group_id']] == 1)
 	{
-		$usersonline_group = $cur_group['g_title'];
-		echo '[<a '.((isset($ds_stats_conf['group_color'][$cur_group['g_id']]) && $ds_stats_conf['topic_colors'] == '1') ? ' style="COLOR: #'.$ds_stats_conf['group_color'][$cur_group['g_id']].'"' : '').' href="userlist.php?show_group='.$cur_group['g_id'].'">'.$usersonline_group.'</a>] ';
+		echo '			<div style="TEXT-ALIGN: center; FONT-SIZE: 0.8em"><hr size="1" style="margin:0;">';
+		echo "\t\t\t\t".$lang_usersonline['Legend'].' ';
+		$result = $db->query('SELECT g_id, g_title FROM '.$db->prefix.'groups WHERE g_id != 3 ORDER BY g_id') or error('Unable to fetch user group list', __FILE__, __LINE__, $db->error());
+		while ($cur_group = $db->fetch_assoc($result))
+		{
+			$usersonline_group = $cur_group['g_title'];
+			echo '[<a '.((isset($ds_stats_conf['group_color'][$cur_group['g_id']]) && $ds_stats_conf['topic_colors'] == '1') ? ' style="COLOR: #'.$ds_stats_conf['group_color'][$cur_group['g_id']].'"' : '').' href="userlist.php?show_group='.$cur_group['g_id'].'">'.$usersonline_group.'</a>] ';
+		}
+		echo '			</div>';
 	}
-	echo '			</div>';
 }
 else
 	echo "\t\t".'</dl>'."\n\t\t\t".'<div class="clearer"></div>'."\n";

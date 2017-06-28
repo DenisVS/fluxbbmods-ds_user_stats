@@ -26,8 +26,8 @@ else
  
 // Tell admin_loader.php that this is indeed a plugin and that it is loaded
 define('PUN_PLUGIN_LOADED', 1);
-$options = unserialize($pun_config['o_ds_stats']); 
-echo '<pre>'; var_dump ($options); echo '</pre><br /><br /><br /><br />';
+$ds_stats_conf = unserialize($pun_config['o_ds_stats']); 
+echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre><br /><br /><br /><br />';
 
 
 
@@ -63,27 +63,39 @@ generate_config_cache();
     ["groupColor"]=>
 	*/ 
 	 
-	$options['online_enabled'] = (isset($_POST["modStatus"]) ? $_POST["modStatus"] : 0);
-	$options['topic_colors'] = (isset($_POST["topicColors"]) ? $_POST["topicColors"] : 0);
-	$options['past_online_enable'] = (isset($_POST["pastOnlineEnable"]) ? $_POST["pastOnlineEnable"] : 0);
-	$options['past_online_time'] = (isset($_POST["pastOnlineTime"]) ? $_POST["pastOnlineTime"] : 0);
-	$options['most_online'] = (isset($_POST["mostOnline"]) ? $_POST["mostOnline"] : 0);
+	$ds_stats_conf['online_enabled'] = (isset($_POST["modStatus"]) ? $_POST["modStatus"] : 0);
+	$ds_stats_conf['topic_colors'] = (isset($_POST["topicColors"]) ? $_POST["topicColors"] : 0);
+	$ds_stats_conf['past_online_enable'] = (isset($_POST["pastOnlineEnable"]) ? $_POST["pastOnlineEnable"] : 0);
+	$ds_stats_conf['past_online_time'] = (isset($_POST["pastOnlineTime"]) ? $_POST["pastOnlineTime"] : 0);
+	$ds_stats_conf['most_online'] = (isset($_POST["mostOnline"]) ? $_POST["mostOnline"] : 0);
+
+if (isset ($_POST["showLegend"]))
+{
+  foreach ($_POST["showLegend"] as $g_id => $legendStatus)	
+  {
+	  $ds_stats_conf['show_legend'][$g_id] = $legendStatus;
+	}
+} 
+	// echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
+
+	$ds_stats_conf['show_legend'] = (isset($_POST["showLegend"]) ? $_POST["showLegend"] : 0);
 
 	foreach ($_POST["groupColor"] as $g_id => $val) {
-		$options['group_color'][$g_id] = $val;
-		if (!$val || $val == 'FFFFFF') {unset ($options['group_color'][$g_id]);}
+		$ds_stats_conf['group_color'][$g_id] = $val;
+		if (!$val || $val == 'FFFFFF') {unset ($ds_stats_conf['group_color'][$g_id]);}
 	}
 
 
 	$result = $db->query('INSERT INTO '.$db->prefix.'config 
-	(conf_name, conf_value) VALUES (\'o_ds_stats\', \''.preg_replace('~\R~u', "\n", trim(serialize($options))).'\') 
-	ON DUPLICATE KEY UPDATE conf_value=\''.preg_replace('~\R~u', "\n", trim(serialize($options))).'\'') or error('Unable to update config', __FILE__, __LINE__, $db->error());
+	(conf_name, conf_value) VALUES (\'o_ds_stats\', \''.preg_replace('~\R~u', "\n", trim(serialize($ds_stats_conf))).'\') 
+	ON DUPLICATE KEY UPDATE conf_value=\''.preg_replace('~\R~u', "\n", trim(serialize($ds_stats_conf))).'\'') or error('Unable to update config', __FILE__, __LINE__, $db->error());
 
 	generate_config_cache();
 
-	 echo '<pre>'; var_dump ($options); echo '</pre>';
+	 echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
 	redirect('admin_loader.php?plugin=AP_DS_User_Online.php','Settings Saved, Redirecting &hellip;');
-	die();
+//*/
+	die(); 
 }
 
  
@@ -107,7 +119,7 @@ generate_config_cache();
 <?php 
 
 
-//echo '<pre>'; var_dump ($options); echo '</pre>';
+//echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
 //echo '<pre>'; var_dump ($pun_config); echo '</pre>';
 
 // Get robots from log
@@ -117,7 +129,7 @@ while ($cur_entry = $db->fetch_assoc($result))
 	$robotsList[$cur_entry['username']] = 1;
 }
 
-if (isset($options['IP']))	{foreach ($options['IP'] as $ip => $key)	{$ipList =  $ipList.$ip. PHP_EOL;}}
+if (isset($ds_stats_conf['IP']))	{foreach ($ds_stats_conf['IP'] as $ip => $key)	{$ipList =  $ipList.$ip. PHP_EOL;}}
 
 ?>
  
@@ -132,7 +144,7 @@ if (isset($options['IP']))	{foreach ($options['IP'] as $ip => $key)	{$ipList =  
 								<tr>
 									<th scope="row"><?php echo $lang_admin_DS_User_Online['Enable mod'] ?></th>
 									<td>
-										<input type="checkbox" name="modStatus" id="ourFormId1" title="Our title" value="1" <?php echo((isset($options['online_enabled'])) ? (($options['online_enabled'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> <?php echo $lang_admin_DS_User_Online['Enable mod checkbox'];?>
+										<input type="checkbox" name="modStatus" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['online_enabled'])) ? (($ds_stats_conf['online_enabled'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> <?php echo $lang_admin_DS_User_Online['Enable mod checkbox'];?>
 									</td>
 								</tr>
 							</table>
@@ -150,7 +162,7 @@ if (isset($options['IP']))	{foreach ($options['IP'] as $ip => $key)	{$ipList =  
 								<tr>
 									<th scope="row"><?php echo $lang_admin_DS_User_Online['Color in topic view'] ?></th>
 									<td>
-										<input type="checkbox" name="topicColors" id="ourFormId1" title="Our title" value="1" <?php echo((isset($options['topic_colors'])) ? (($options['topic_colors'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> <?php echo $lang_admin_DS_User_Online['Group color in topic'];?>
+										<input type="checkbox" name="topicColors" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['topic_colors'])) ? (($ds_stats_conf['topic_colors'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> <?php echo $lang_admin_DS_User_Online['Group color in topic'];?>
 									</td>
 								</tr>
 
@@ -160,7 +172,7 @@ if (isset($options['IP']))	{foreach ($options['IP'] as $ip => $key)	{$ipList =  
 								<tr>
 									<th scope="row"><?php echo $lang_admin_DS_User_Online['Past online'] ?></th>
 									<td>
-										<input type="checkbox" name="pastOnlineEnable" id="ourFormId1" title="Our title" value="1" <?php echo((isset($options['past_online_enable'])) ? (($options['past_online_enable'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> <?php echo $lang_admin_DS_User_Online['Show online past xx'];?>
+										<input type="checkbox" name="pastOnlineEnable" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['past_online_enable'])) ? (($ds_stats_conf['past_online_enable'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> <?php echo $lang_admin_DS_User_Online['Show online past xx'];?>
 									</td>
 								</tr>
 
@@ -168,7 +180,7 @@ if (isset($options['IP']))	{foreach ($options['IP'] as $ip => $key)	{$ipList =  
 								<tr>
 									<th scope="row"><?php echo $lang_admin_DS_User_Online['Past online period'] ?></th>
 									<td>
-										<input type="text" name="pastOnlineTime" id="ourFormId1" title="Our title" value="<?php echo((isset($options['past_online_time'])) ? ($options['past_online_time'] ) : '60m'); ?>"/>  <?php echo $lang_admin_DS_User_Online['Examples 15m'];?>
+										<input type="text" name="pastOnlineTime" id="ourFormId1" title="Our title" value="<?php echo((isset($ds_stats_conf['past_online_time'])) ? ($ds_stats_conf['past_online_time'] ) : '60m'); ?>"/>  <?php echo $lang_admin_DS_User_Online['Examples 15m'];?>
 									</td>
 								</tr>
 
@@ -176,7 +188,7 @@ if (isset($options['IP']))	{foreach ($options['IP'] as $ip => $key)	{$ipList =  
 								<tr>
 									<th scope="row"><?php echo $lang_admin_DS_User_Online['Show most online'] ?></th>
 									<td>
-										<input type="checkbox" name="mostOnline" id="ourFormId1" title="Our title" value="1" <?php echo((isset($options['most_online'])) ? (($options['most_online'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/>   <?php echo $lang_admin_DS_User_Online['Most online at time'];?>
+										<input type="checkbox" name="mostOnline" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['most_online'])) ? (($ds_stats_conf['most_online'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/>   <?php echo $lang_admin_DS_User_Online['Most online at time'];?>
 									</td>
 								</tr>
 
@@ -189,38 +201,26 @@ if (isset($options['IP']))	{foreach ($options['IP'] as $ip => $key)	{$ipList =  
 $result = $db->query('SELECT g_id, g_title FROM '.$db->prefix.'groups' );
 while ($row = $result->fetch_assoc()) {
 ?>
-<?php //echo $row["g_id"];?> 
-<?php //echo $row["g_title"];?> 
-
-
 								<tr>
-									<th scope="row"><?php echo $row["g_title"];?> <?php echo $lang_admin_DS_User_Online['group color'] ?></th>
+									<th scope="row"><?php echo $row["g_title"];?></th>
 									<td>
-										<input class="jscolor" type="text" name="groupColor[<?php echo $row["g_id"];?>]" id="ourFormId1" title="Our title" value="<?php echo((isset($options['group_color'][$row["g_id"]])) ? ($options['group_color'][$row["g_id"]]) : ''); ?>"/>   <?php echo $lang_admin_DS_User_Online['Group color for'];?> <?php echo $row["g_title"];?>. <?php echo $lang_admin_DS_User_Online['Leave blank'];?>
+										<input maxlength="6" size="6" class="jscolor" type="text" name="groupColor[<?php echo $row["g_id"];?>]" id="ourFormId1" title="Our title" value="<?php echo((isset($ds_stats_conf['group_color'][$row["g_id"]])) ? ($ds_stats_conf['group_color'][$row["g_id"]]) : ''); ?>"/>   <?php echo $lang_admin_DS_User_Online['Group color for'];?> <?php echo $row["g_title"];?>. <?php echo $lang_admin_DS_User_Online['Leave blank'];?>
+									</td>
+									<td>
+										<input type="checkbox" name="showLegend[<?php echo $row["g_id"];?>]" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['show_legend'][$row["g_id"]])) ? (($ds_stats_conf['show_legend'][$row["g_id"]] == 1) ? 'checked="checked"' : false ) : false); ?>/>  Show Legend
+										
 									</td>
 								</tr>
 
 <?php
 }
 $result->free();	// free result set
+
+
 ?>
 	
 	
 
-
-
-
-
-
-
-
-
-
-
-
-
-								
-								
 								
 							</table>
 
