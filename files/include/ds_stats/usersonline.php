@@ -294,7 +294,7 @@ if ($pun_config['o_users_online'] == '1')
 		if ($pun_user['g_view_users'] == '1')
 			$users_today[] =  "\n\t\t\t\t".'<dd><a '.((isset($ds_stats_conf['group_color'][$user_online_today['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$user_online_today['group_id']].'" ' : '').' href="profile.php?id='.$user_online_today['id'].'" title="'.sprintf($lang_usersonline['Last visit'], pun_htmlspecialchars($user_online_today['username']), format_time($user_online_today['last_visit'])).'">'.pun_htmlspecialchars($user_online_today['username']).'</a>';
 		else
-			$users_today[] =  "\n\t\t\t\t".'<dd><span '.((isset($ds_stats_conf['group_color'][$user_online_today['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$user_online_today['group_id']].'" ' : '').' title="'.sprintf($lang_usersonline['Last visit'], pun_htmlspecialchars($user_online_today['username']), format_time($user_online_today['last_visit'])).'">'.pun_htmlspecialchars($user_online_today['username']).'</span>';
+			$users_today[] =  "\n\t\t\t\t".'<dd><span '.((isset($ds_stats_conf['group_color'][$user_online_today['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$user_online_today['group_id']].'" ' : '').' >'.pun_htmlspecialchars($user_online_today['username']).'</span>';
 	}
 	if (count($users_today) > 0) 
 		echo "\t\t\t".'<dl id="onlinelist" class="clearb">'."\n\t\t\t\t".'<dt>'.$lang_usersonline['Online today'].': </dt>'.implode(',</dd> ', $users_today).'</dd>'."\n\t\t\t".'</dl>'."\n";
