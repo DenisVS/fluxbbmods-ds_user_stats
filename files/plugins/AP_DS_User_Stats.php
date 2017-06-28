@@ -29,10 +29,10 @@ define('PUN_PLUGIN_LOADED', 1);
 // Add bots
 if (isset($_POST['add_bots']))
 {
-  //$result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_user_stats\'' );
+  //$result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_stats\'' );
   //$data = $db->fetch_assoc($result);
   //$ds_stats_conf = unserialize($data['conf_value']);
-  $ds_stats_conf = unserialize($pun_config['o_ds_user_stats']);
+  $ds_stats_conf = unserialize($pun_config['o_ds_stats']);
   //echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre><br /><br /><br /><br />';
   foreach ($_POST['newBots']  as $botNUM => $botName)  
   {
@@ -40,7 +40,7 @@ if (isset($_POST['add_bots']))
   }
   //echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
 	$db->query('INSERT INTO '.$db->prefix.'config 
-	(conf_name, conf_value) VALUES (\'o_ds_user_stats\', \''.serialize($ds_stats_conf).'\') 
+	(conf_name, conf_value) VALUES (\'o_ds_stats\', \''.serialize($ds_stats_conf).'\') 
 	ON DUPLICATE KEY UPDATE conf_value=\''.serialize($ds_stats_conf).'\'') or error('Unable to update config', __FILE__, __LINE__, $db->error());
 
 if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
@@ -56,7 +56,7 @@ generate_config_cache();
 // Delete bots
 if (isset($_POST['delete_bots']))
 {
-  $result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_user_stats\'' );
+  $result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_stats\'' );
   $data = $db->fetch_assoc($result);
   $ds_stats_conf = unserialize($data['conf_value']);
   //echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre><br /><br /><br /><br />';
@@ -66,7 +66,7 @@ if (isset($_POST['delete_bots']))
   }
   //echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
 	$db->query('INSERT INTO '.$db->prefix.'config 
-	(conf_name, conf_value) VALUES (\'o_ds_user_stats\', \''.serialize($ds_stats_conf).'\') 
+	(conf_name, conf_value) VALUES (\'o_ds_stats\', \''.serialize($ds_stats_conf).'\') 
 	ON DUPLICATE KEY UPDATE conf_value=\''.serialize($ds_stats_conf).'\'') or error('Unable to update config', __FILE__, __LINE__, $db->error());
 	
 	if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
@@ -84,7 +84,7 @@ generate_config_cache();
 if (isset($_POST['save_options']))
 {
 
-  $result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_user_stats\'' );
+  $result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_stats\'' );
   $data = $db->fetch_assoc($result);
   $ds_stats_conf = unserialize($data['conf_value']);
 
@@ -114,7 +114,7 @@ if (isset ($ds_stats_conf["bots"]))
  //(isset($ds_stats_conf["bots"]) foreach ($ds_stats_conf["bots"] as $botName => $botStatus)	{$ds_stats_conf["bots"][$botName] = (isset($_POST["botName"][$botName])) ? 1 : 0;}  : 0);
 
 	$result = $db->query('INSERT INTO '.$db->prefix.'config 
-	(conf_name, conf_value) VALUES (\'o_ds_user_stats\', \''.preg_replace('~\R~u', "\n", trim(serialize($ds_stats_conf))).'\') 
+	(conf_name, conf_value) VALUES (\'o_ds_stats\', \''.preg_replace('~\R~u', "\n", trim(serialize($ds_stats_conf))).'\') 
 	ON DUPLICATE KEY UPDATE conf_value=\''.preg_replace('~\R~u', "\n", trim(serialize($ds_stats_conf))).'\'') or error('Unable to update config', __FILE__, __LINE__, $db->error());
 
 if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
@@ -146,7 +146,7 @@ generate_config_cache();
 <script src="js/jscolor.min.js"></script>
 <?php 
 
-$result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_user_stats\'' );
+$result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_stats\'' );
 $data = $db->fetch_assoc($result);
 $ds_stats_conf = unserialize($data['conf_value']);
 //echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';

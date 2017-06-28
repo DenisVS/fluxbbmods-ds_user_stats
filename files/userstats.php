@@ -7,7 +7,7 @@ ini_set('error_reporting', E_ALL);
 ini_set("display_startup_errors","1");
 define('PUN_ROOT', './');
 require PUN_ROOT.'include/common.php';
-$ds_stats_conf = unserialize($pun_config['o_ds_user_stats']);
+$ds_stats_conf = unserialize($pun_config['o_ds_stats']);
 (isset($ds_stats_conf['ent_per_page']) ? $ds_stats_conf['ent_per_page']:$ds_stats_conf['ent_per_page'] = 50);
 require PUN_ROOT.'include/userstats/english_country.php';	// Load the language country vars
 $multibyte = (isset($lang_common['lang_multibyte']) && $lang_common['lang_multibyte']) ? true : false;	// Detect two byte character sets

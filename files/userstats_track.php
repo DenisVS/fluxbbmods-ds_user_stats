@@ -10,7 +10,7 @@
 
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 define('PUN_ROOT', './');
-$ds_stats_conf = unserialize($pun_config['o_ds_user_stats']);
+$ds_stats_conf = unserialize($pun_config['o_ds_stats']);
 
 if (isset($ds_stats_conf['IP'][$_SERVER ['REMOTE_ADDR']])) $stopLog = true;
 
