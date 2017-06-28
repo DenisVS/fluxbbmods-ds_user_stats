@@ -1,6 +1,6 @@
 <?php
   /**
-   * User Stats - userstats_track.php
+   * User Stats - include/ds_stats/userstats_track.php
    * 
    * @author : Koos
    * @email  : pampoen10@yahoo.com
