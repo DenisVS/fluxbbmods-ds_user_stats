@@ -9,7 +9,7 @@ define('PUN_ROOT', './');
 require PUN_ROOT.'include/common.php';
 $ds_stats_conf = unserialize($pun_config['o_ds_stats']);
 (isset($ds_stats_conf['ent_per_page']) ? $ds_stats_conf['ent_per_page']:$ds_stats_conf['ent_per_page'] = 50);
-require PUN_ROOT.'include/userstats/english_country.php';	// Load the language country vars
+require PUN_ROOT.'include/ds_stats/english_country.php';	// Load the language country vars
 $multibyte = (isset($lang_common['lang_multibyte']) && $lang_common['lang_multibyte']) ? true : false;	// Detect two byte character sets
 $page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), 'User stats');
 require PUN_ROOT.'header.php';
