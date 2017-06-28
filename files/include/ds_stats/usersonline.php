@@ -28,7 +28,10 @@ if ($pun_config['o_users_online'] == '1')
 	{
 		if ($pun_user_online['user_id'] > 1)
 		{
-			$users[] = "\n\t\t\t\t".'<dd><a '.((isset($ds_stats_conf['group_color'][$pun_user_online['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$pun_user_online['group_id']].'" ' : '').'href="profile.php?id='.$pun_user_online['user_id'].'">'.pun_htmlspecialchars($pun_user_online['ident']).'</a>';
+			if ($pun_user['g_view_users'] == '1')
+				$users[] = "\n\t\t\t\t".'<dd><a '.((isset($ds_stats_conf['group_color'][$pun_user_online['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$pun_user_online['group_id']].'" ' : '').'href="profile.php?id='.$pun_user_online['user_id'].'">'.pun_htmlspecialchars($pun_user_online['ident']).'</a>';
+			else
+				$users[] = "\n\t\t\t\t".'<dd><span '.((isset($ds_stats_conf['group_color'][$pun_user_online['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$pun_user_online['group_id']].'" ' : '').'">'.pun_htmlspecialchars($pun_user_online['ident']).'</span>';
 		}
 		else
 			++$num_guests;
@@ -259,20 +262,18 @@ if ($pun_config['o_users_online'] == '1')
 			// **** Sort the active user list alphabetically end
 			$guests_ot_dsp = ($num_guests_ot == "1") ? $lang_usersonline['Guest single'] : $lang_usersonline['Guests plural'];
 			$users_ot_dsp = ($num_users_ot == "1") ? $lang_usersonline['Registered user single'] : $lang_usersonline['Registered users plural'];
-
 			echo "\t\t\t".'<dl id="pastonline" class= "clearb">'."\n\t\t\t\t".'<dt style="DISPLAY: inline; HEIGHT: 0">'.$period_string.':&nbsp;'.($num_guests_ot+$num_users_ot).'&nbsp;['.$num_guests_ot.'&nbsp;'.$guests_ot_dsp.', '.$num_users_ot.'&nbsp;'.$users_ot_dsp.']</dt>';
-
 			$user_count = 0;
-		
 			// display however you want
 			foreach ($tmp_array as $pos => $val)
 			{
 				++$user_count;
 
 				if ($user_count < $num_users_ot)
-					echo $users_ot[$pos]["link"].', </dd>';
+					echo(($pun_user['g_view_users'] == '1') ? ($users_ot[$pos]['link'].', </dd>') : $users_ot[$pos]['username'].', </dd>');
 				else
-					echo $users_ot[$pos]["link"].'</dd>';
+					echo(($pun_user['g_view_users'] == '1') ? ($users_ot[$pos]['link'].'</dd>') : ' '.$users_ot[$pos]['username'].'</dd>');
+
 			}
 			echo "\n\t\t\t".'</dl>'."\n";
 		}
