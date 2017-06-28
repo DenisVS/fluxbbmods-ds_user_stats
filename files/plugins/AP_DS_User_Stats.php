@@ -13,6 +13,8 @@ ini_set('display_errors', 1);
 // Make sure no one attempts to run this script "directly"
 if (!defined('PUN'))
 	exit;
+
+$ds_stats_conf = unserialize($pun_config['o_ds_stats']);
  
 // Load the admin_plugin_example.php language file
 require PUN_ROOT.'lang/'.$admin_language.'/admin_DS_User_Stats.php';
@@ -29,16 +31,10 @@ define('PUN_PLUGIN_LOADED', 1);
 // Add bots
 if (isset($_POST['add_bots']))
 {
-  //$result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_stats\'' );
-  //$data = $db->fetch_assoc($result);
-  //$ds_stats_conf = unserialize($data['conf_value']);
-  $ds_stats_conf = unserialize($pun_config['o_ds_stats']);
-  //echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre><br /><br /><br /><br />';
   foreach ($_POST['newBots']  as $botNUM => $botName)  
   {
     $ds_stats_conf['bots'][$botName] = true;
   }
-  //echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
 	$db->query('INSERT INTO '.$db->prefix.'config 
 	(conf_name, conf_value) VALUES (\'o_ds_stats\', \''.serialize($ds_stats_conf).'\') 
 	ON DUPLICATE KEY UPDATE conf_value=\''.serialize($ds_stats_conf).'\'') or error('Unable to update config', __FILE__, __LINE__, $db->error());
@@ -56,10 +52,6 @@ generate_config_cache();
 // Delete bots
 if (isset($_POST['delete_bots']))
 {
-  $result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_stats\'' );
-  $data = $db->fetch_assoc($result);
-  $ds_stats_conf = unserialize($data['conf_value']);
-  //echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre><br /><br /><br /><br />';
   foreach ($_POST['existBots']  as $botNUM => $botName)  
   {
     unset ($ds_stats_conf['bots'][$botName]);
@@ -83,11 +75,6 @@ generate_config_cache();
 // Save options
 if (isset($_POST['save_options']))
 {
-
-  $result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_stats\'' );
-  $data = $db->fetch_assoc($result);
-  $ds_stats_conf = unserialize($data['conf_value']);
-
 	$ds_stats_conf['stats_enabled'] = (isset($_POST["modStatus"]) ? $_POST["modStatus"] : 0);
 	$ds_stats_conf['ent_per_page'] = (isset($_POST["entPerPage"]) ? $_POST["entPerPage"] : 0);
 	$ds_stats_conf['ent_in_database'] = (isset($_POST["maxEntries"]) ? $_POST["maxEntries"] : 0);
@@ -98,6 +85,21 @@ if (isset($_POST['save_options']))
 	$ds_stats_conf['perm_users'] = (isset($_POST["permUsers"]) ? $_POST["permUsers"] : 0);
 	$ds_stats_conf['perm_mods'] = (isset($_POST["permModerators"]) ? $_POST["permModerators"] : 0);
 	$ds_stats_conf['otherBots'] = (isset($_POST["otherBots"]) ? $_POST["otherBots"] : 0);
+
+if (isset($_POST["IP"]) && !empty($_POST["IP"]))
+{
+	$ips = $_POST["IP"];
+	$ips =   str_replace  ("\r", "\n", trim ($ips));
+	$ips =   str_replace  ("\n", ' ', trim ($ips));
+	$ips = preg_replace("/\s+/", " ", $ips);
+	$ips =   explode(' ', trim ($ips));
+	foreach ($ips as $ip)	{$ds_stats_conf['IP'][$ip] = true;}
+}
+else
+{
+	unset ($ds_stats_conf['IP']);
+}
+	/*/
 	$ips = (isset($_POST["IP"]) ? $_POST["IP"] : false);
 	$ips =   str_replace  ("\r", "\n", trim ($ips));
 	$ips =   str_replace  ("\n", ' ', trim ($ips));
@@ -105,6 +107,7 @@ if (isset($_POST['save_options']))
 	$ips =   explode(' ', trim ($ips));
 	unset ($ds_stats_conf['IP']);
 	foreach ($ips as $ip)	{$ds_stats_conf['IP'][$ip] = true;}
+	*/
 
 if (isset ($ds_stats_conf["bots"]))
 {
