@@ -36,13 +36,22 @@ if ($pun_config['o_users_online'] == '1')
 	$num_users = count($users);
 	$guests_dsp = ($num_guests == "1") ? $lang_usersonline['Guest single'] : $lang_usersonline['Guests plural'];
 	$users_dsp = ($num_users == "1") ? $lang_usersonline['Registered user single'] : $lang_usersonline['Registered users plural'];
-	if ($num_users > 0)
+	if(($pun_user['g_id'] == PUN_GUEST && $ds_stats_conf['perm_guests'] == "0")||($pun_user['g_id'] > PUN_MOD && $ds_stats_conf['perm_users'] == "0")||($pun_user['g_id'] == PUN_MOD && $ds_stats_conf['perm_mods'] == "0"))
 	{
-		echo "\t\t\t".'<dl id="onlinelist" class= "clearb">'."\n\t\t\t\t".'<dt><strong><a href="userstats.php">'.$lang_usersonline['Online'].':</a></strong>&nbsp;'.($num_guests+$num_users).'&nbsp;['.$num_guests.'&nbsp;'.$guests_dsp.', '.$num_users.'&nbsp;'.$users_dsp.']</dt>'."\t\t\t\t".implode(',</dd> ', $users).'</dd>'."\n\t\t\t".'</dl>'."\n";
+		$online_label = $lang_usersonline['Online'].':';
 	}
 	else
 	{
-		echo "\t\t\t".'<dl id="onlinelist" class= "clearb">'."\n\t\t\t\t".'<dt><strong><a href="userstats.php">'.$lang_usersonline['Online'].':</a></strong>&nbsp;'.($num_guests+$num_users).'&nbsp;['.$num_guests.'&nbsp;'.$guests_dsp.', '.$num_users.'&nbsp;'.$users_dsp.']</dt>'."\n\t\t\t".'</dl>'."\n";
+		$online_label = '<a href="userstats.php">'.$lang_usersonline['Online'].':</a>';
+	}
+
+	if ($num_users > 0)
+	{
+		echo "\t\t\t".'<dl id="onlinelist" class= "clearb">'."\n\t\t\t\t".'<dt><strong>'.$online_label.'</strong>&nbsp;'.($num_guests+$num_users).'&nbsp;['.$num_guests.'&nbsp;'.$guests_dsp.', '.$num_users.'&nbsp;'.$users_dsp.']</dt>'."\t\t\t\t".implode(',</dd> ', $users).'</dd>'."\n\t\t\t".'</dl>'."\n";
+	}
+	else
+	{
+		echo "\t\t\t".'<dl id="onlinelist" class= "clearb">'."\n\t\t\t\t".'<dt><strong>'.$online_label.'</strong>&nbsp;'.($num_guests+$num_users).'&nbsp;['.$num_guests.'&nbsp;'.$guests_dsp.', '.$num_users.'&nbsp;'.$users_dsp.']</dt>'."\n\t\t\t".'</dl>'."\n";
 	}
 
 //########### MOST ONLINE START
