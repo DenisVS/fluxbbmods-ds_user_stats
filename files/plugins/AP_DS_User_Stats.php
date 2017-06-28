@@ -88,7 +88,7 @@ if (isset($_POST['save_options']))
   $data = $db->fetch_assoc($result);
   $options = unserialize($data['conf_value']);
 
-	$options['mod_enabled'] = (isset($_POST["modStatus"]) ? $_POST["modStatus"] : 0);
+	$options['stats_enabled'] = (isset($_POST["modStatus"]) ? $_POST["modStatus"] : 0);
 	$options['ent_per_page'] = (isset($_POST["entPerPage"]) ? $_POST["entPerPage"] : 0);
 	$options['ent_in_database'] = (isset($_POST["maxEntries"]) ? $_POST["maxEntries"] : 0);
 	$options['highlight_users'] = (isset($_POST["highlightUser"]) ? $_POST["highlightUser"] : 0);
@@ -174,7 +174,7 @@ if (isset($options['IP']))	{foreach ($options['IP'] as $ip => $key)	{$ipList =  
 								<tr>
 									<th scope="row"><?php echo $lang_admin_DS_User_Stats['Enable mod'] ?></th>
 									<td>
-										<input type="checkbox" name="modStatus" id="ourFormId1" title="Our title" value="1" <?php echo((isset($options['mod_enabled'])) ? (($options['mod_enabled'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> Плагин включен
+										<input type="checkbox" name="modStatus" id="ourFormId1" title="Our title" value="1" <?php echo((isset($options['stats_enabled'])) ? (($options['stats_enabled'] == 1) ? 'checked="checked"' : false ) : 'checked="checked"'); ?>/> Плагин включен
 									</td>
 								</tr>
 							</table>

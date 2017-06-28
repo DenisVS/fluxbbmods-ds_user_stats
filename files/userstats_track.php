@@ -25,7 +25,7 @@ if ($pun_user['username'] == 'Guest')
   } 
 } 
 
-if ($options['mod_enabled'])
+if ($options['stats_enabled'])
 {
 	if ($searchengine) 
 	{	
