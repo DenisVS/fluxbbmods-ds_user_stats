@@ -8,29 +8,19 @@
    * @release date : 2009-09-20
    */
 
-use Jaybizzle\CrawlerDetect\CrawlerDetect;
+
 define('PUN_ROOT', './');
 $ds_stats_conf = unserialize($pun_config['o_ds_stats']);
 
 if (isset($ds_stats_conf['IP'][$_SERVER ['REMOTE_ADDR']])) $stopLog = true;
 
-if ($pun_user['username'] == 'Guest')
-{
-  require_once 'include/crawler-detect/vendor/autoload.php';
-  $CrawlerDetect = new CrawlerDetect;
-  
-  if($CrawlerDetect->isCrawler($_SERVER['HTTP_USER_AGENT'])) 
-  {
-    $bot_ident = $CrawlerDetect->getMatches($_SERVER['HTTP_USER_AGENT']);
-  } 
-} 
 
 if ($ds_stats_conf['stats_enabled'])
 {
-	if ($bot_ident) 
+	if ($pun_user['is_bot']) 
 	{	
-		if (isset($ds_stats_conf['bots'][$bot_ident])) {
-			if ($ds_stats_conf['bots'][$bot_ident] == 0) {$stopLog = true;}
+		if (isset($ds_stats_conf['bots'][$pun_user['is_bot']])) {
+			if ($ds_stats_conf['bots'][$pun_user['is_bot']] == 0) {$stopLog = true;}
 		} else {
 			if (isset($ds_stats_conf['otherBots'])) {
 				if ($ds_stats_conf['otherBots'] == 0)	{$stopLog = true;}
@@ -40,7 +30,7 @@ if ($ds_stats_conf['stats_enabled'])
 		if (!$stopLog) {
 			require_once ('include/ua_parser/UserAgentParser.php');
 			$userInfo = parse_user_agent ($_SERVER['HTTP_USER_AGENT']);
-			$username = $bot_ident;
+			$username = $pun_user['is_bot'];
 			$browser = 'Robot';
 			$opsys = $userInfo['browser'].'  '.$userInfo ['system']['name'].'  '.$userInfo['platform'].'  '.$userInfo ['system']['details'];
 		}
