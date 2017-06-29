@@ -35,11 +35,10 @@ if ($pun_config['o_users_online'] == '1')
 		}
 		else
 		{
-			if ($pun_user_online['bot_ident'])	++$num_bots;
-			++$num_guests;
+			if ($pun_user_online['bot_ident']) 	++$num_bots; else ++$num_guests;
 		}
 	}
-	$num_guests = $num_guests - $num_bots;
+	//$num_guests = $num_guests - $num_bots;
 	$num_users = count($users);
 	$bots_dsp = ($num_bots == "1") ? $lang_usersonline['Bot single'] : $lang_usersonline['Bots plural'];
 	$guests_dsp = ($num_guests == "1") ? $lang_usersonline['Guest single'] : $lang_usersonline['Guests plural'];
@@ -50,6 +49,7 @@ if ($pun_config['o_users_online'] == '1')
 	}
 	else
 	{
+		
 		$online_label = '<a href="userstats.php">'.$lang_usersonline['Online'].':</a>';
 	}
 
@@ -63,16 +63,17 @@ if ($pun_config['o_users_online'] == '1')
 	}
 
 //########### MOST ONLINE START
-	$rnum_guests = 0;
-	$rnum_users = 0;
-	$result = $db->query('SELECT user_id, ident FROM '.$db->prefix.'online WHERE idle=0 ORDER BY ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
+	$rnum_guests = $rnum_users = $rnum_bots = 0;
+	$result = $db->query('SELECT user_id, ident, bot_ident FROM '.$db->prefix.'online WHERE idle=0 ORDER BY ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
 
 	while ($pun_user_online = $db->fetch_assoc($result))
 	{
 		if ($pun_user_online['user_id'] > 1)
 			++$rnum_users;
 		else
-			++$rnum_guests;
+		{
+			if ($pun_user_online['bot_ident'])	++$rnum_bots;	else ++$rnum_guests;
+		}
 	}
 	$rnum_total = $rnum_users + $rnum_guests;
 	$usersonline_ob_en = "1";
