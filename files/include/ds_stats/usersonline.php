@@ -1,5 +1,5 @@
 <?php
-
+//$Id:$
 // Load the ds_stats.php language file
 if (file_exists(PUN_ROOT.'lang/'.$pun_user['language'].'/ds_stats.php'))
 	require PUN_ROOT.'lang/'.$pun_user['language'].'/ds_stats.php';
@@ -10,7 +10,7 @@ else
 	<h2><span><?php echo $lang_index['Board info'] ?></span></h2>
 	<div class="box">
 		<div class="inbox">
-			<p class="conr"><?php echo $lang_usersonline['Newest user'] ?>: <a href="profile.php?id=<?php echo $stats['last_user']['id'] ?>"><?php echo pun_htmlspecialchars($stats['last_user']['username']) ?></a></p>
+			<p class="conr"><?php echo $lang_usersonline['Newest user'] . ': '; echo ($pun_user['g_view_users'] == '1') ? '<a href="profile.php?id='.$stats['last_user']['id'].'">'.pun_htmlspecialchars($stats['last_user']['username']).'</a>' : pun_htmlspecialchars($stats['last_user']['username']); ?></p>
 			<dl id="statslist">
 				<dt style="DISPLAY: inline; HEIGHT: 0"><?php echo '<strong>'.$lang_usersonline['Board stats'].':</strong>'; ?></dt>
 				<dd style="DISPLAY: inline; HEIGHT: 0"><?php echo ''.$stats['total_users'].'&nbsp;'.$lang_usersonline['Users'].'&nbsp;|'; ?></dd>
