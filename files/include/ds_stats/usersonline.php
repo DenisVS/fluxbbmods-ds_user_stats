@@ -169,7 +169,7 @@ if ($pun_config['o_users_online'] == '1')
 				$period_string = ($period == "1") ? $lang_usersonline['Online past minute single'] : str_replace('<NUM>', $period, $lang_usersonline['Online past minutes plural']);
 			}
 		}
-		$result2 = $db->query('SELECT DISTINCT u.username, u.userid, u.userip, r.group_id FROM '.$db->prefix.'userstats AS u LEFT JOIN '.$db->prefix.'users as r ON u.userid = r.id WHERE u.date >='.$period_check.' ORDER BY u.userip') or error('Unable to fetch user stats', __FILE__, __LINE__, $db->error());
+		$result2 = $db->query('SELECT DISTINCT u.username, u.userid, u.userip, r.group_id FROM '.$db->prefix.'userstats AS u LEFT JOIN '.$db->prefix.'users as r ON u.userid = r.id WHERE u.date >='.$period_check.' AND u.browser <> \'Robot\' ORDER BY u.userip') or error('Unable to fetch user stats', __FILE__, __LINE__, $db->error());
 		$jj_userip_pre = "nantsoke"; // Just some random text for initialization
 		$jj_userid_pre = "nantsoke"; // Just some random text for initialization
 		$jj_userids = array(); // Initialize array
