@@ -21,9 +21,9 @@ else
 if ($pun_config['o_users_online'] == '1')
 {
 	// Fetch users online info and generate strings for output
-	$num_guests = 0;
+	$num_guests = $num_bots = 0;
 	$users = array();
-	$result = $db->query('SELECT u.user_id, u.ident, r.group_id FROM '.$db->prefix.'online as u LEFT JOIN '.$db->prefix.'users as r ON u.user_id = r.id WHERE u.idle=0 ORDER BY u.ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
+	$result = $db->query('SELECT u.user_id, u.ident, u.bot_ident, r.group_id FROM '.$db->prefix.'online as u LEFT JOIN '.$db->prefix.'users as r ON u.user_id = r.id WHERE u.idle=0 ORDER BY u.ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
 	while ($pun_user_online = $db->fetch_assoc($result))
 	{
 		if ($pun_user_online['user_id'] > 1)
@@ -34,9 +34,14 @@ if ($pun_config['o_users_online'] == '1')
 				$users[] = "\n\t\t\t\t".'<dd><span '.((isset($ds_stats_conf['group_color'][$pun_user_online['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$pun_user_online['group_id']].'" ' : '').'">'.pun_htmlspecialchars($pun_user_online['ident']).'</span>';
 		}
 		else
+		{
+			if ($pun_user_online['bot_ident'])	++$num_bots;
 			++$num_guests;
+		}
 	}
+	$num_guests = $num_guests - $num_bots;
 	$num_users = count($users);
+	$bots_dsp = ($num_bots == "1") ? $lang_usersonline['Bot single'] : $lang_usersonline['Bots plural'];
 	$guests_dsp = ($num_guests == "1") ? $lang_usersonline['Guest single'] : $lang_usersonline['Guests plural'];
 	$users_dsp = ($num_users == "1") ? $lang_usersonline['Registered user single'] : $lang_usersonline['Registered users plural'];
 	if(($pun_user['g_id'] == PUN_GUEST && $ds_stats_conf['perm_guests'] == "0")||($pun_user['g_id'] > PUN_MOD && $ds_stats_conf['perm_users'] == "0")||($pun_user['g_id'] == PUN_MOD && $ds_stats_conf['perm_mods'] == "0"))
@@ -50,11 +55,11 @@ if ($pun_config['o_users_online'] == '1')
 
 	if ($num_users > 0)
 	{
-		echo "\t\t\t".'<dl id="onlinelist" class= "clearb">'."\n\t\t\t\t".'<dt><strong>'.$online_label.'</strong>&nbsp;'.($num_guests+$num_users).'&nbsp;['.$num_guests.'&nbsp;'.$guests_dsp.', '.$num_users.'&nbsp;'.$users_dsp.']</dt>'."\t\t\t\t".implode(',</dd> ', $users).'</dd>'."\n\t\t\t".'</dl>'."\n";
+		echo "\t\t\t".'<dl id="onlinelist" class= "clearb">'."\n\t\t\t\t".'<dt><strong>'.$online_label.'</strong>&nbsp;'.($num_guests+$num_users+$num_bots).'&nbsp;['.$num_bots.'&nbsp;'.$bots_dsp.', '.$num_guests.'&nbsp;'.$guests_dsp.', '.$num_users.'&nbsp;'.$users_dsp.']</dt>'."\t\t\t\t".implode(',</dd> ', $users).'</dd>'."\n\t\t\t".'</dl>'."\n";
 	}
 	else
 	{
-		echo "\t\t\t".'<dl id="onlinelist" class= "clearb">'."\n\t\t\t\t".'<dt><strong>'.$online_label.'</strong>&nbsp;'.($num_guests+$num_users).'&nbsp;['.$num_guests.'&nbsp;'.$guests_dsp.', '.$num_users.'&nbsp;'.$users_dsp.']</dt>'."\n\t\t\t".'</dl>'."\n";
+		echo "\t\t\t".'<dl id="onlinelist" class= "clearb">'."\n\t\t\t\t".'<dt><strong>'.$online_label.'</strong>&nbsp;'.($num_guests+$num_users+$num_bots).'&nbsp;['.$num_bots.'&nbsp;'.$bots_dsp.', '.$num_guests.'&nbsp;'.$guests_dsp.', '.$num_users.'&nbsp;'.$users_dsp.']</dt>'."\n\t\t\t".'</dl>'."\n";
 	}
 
 //########### MOST ONLINE START
