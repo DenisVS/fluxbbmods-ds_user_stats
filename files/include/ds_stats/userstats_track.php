@@ -21,16 +21,16 @@ if ($pun_user['username'] == 'Guest')
   
   if($CrawlerDetect->isCrawler($_SERVER['HTTP_USER_AGENT'])) 
   {
-    $searchengine = $CrawlerDetect->getMatches($_SERVER['HTTP_USER_AGENT']);
+    $bot_ident = $CrawlerDetect->getMatches($_SERVER['HTTP_USER_AGENT']);
   } 
 } 
 
 if ($ds_stats_conf['stats_enabled'])
 {
-	if ($searchengine) 
+	if ($bot_ident) 
 	{	
-		if (isset($ds_stats_conf['bots'][$searchengine])) {
-			if ($ds_stats_conf['bots'][$searchengine] == 0) {$stopLog = true;}
+		if (isset($ds_stats_conf['bots'][$bot_ident])) {
+			if ($ds_stats_conf['bots'][$bot_ident] == 0) {$stopLog = true;}
 		} else {
 			if (isset($ds_stats_conf['otherBots'])) {
 				if ($ds_stats_conf['otherBots'] == 0)	{$stopLog = true;}
@@ -40,7 +40,7 @@ if ($ds_stats_conf['stats_enabled'])
 		if (!$stopLog) {
 			require_once ('include/ua_parser/UserAgentParser.php');
 			$userInfo = parse_user_agent ($_SERVER['HTTP_USER_AGENT']);
-			$username = $searchengine;
+			$username = $bot_ident;
 			$browser = 'Robot';
 			$opsys = $userInfo['browser'].'  '.$userInfo ['system']['name'].'  '.$userInfo['platform'].'  '.$userInfo ['system']['details'];
 		}
