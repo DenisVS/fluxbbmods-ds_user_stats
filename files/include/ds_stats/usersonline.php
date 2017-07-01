@@ -23,7 +23,7 @@ if ($pun_config['o_users_online'] == '1')
 	// Fetch users online info and generate strings for output
 	$num_guests = $num_bots = 0;
 	$users = array();
-	$result = $db->query('SELECT u.user_id, u.ident, u.bot_ident, r.group_id FROM '.$db->prefix.'online as u LEFT JOIN '.$db->prefix.'users as r ON u.user_id = r.id WHERE u.idle=0 ORDER BY u.ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
+	$result = $db->query('SELECT u.user_id, u.ident, u.is_bot, r.group_id FROM '.$db->prefix.'online as u LEFT JOIN '.$db->prefix.'users as r ON u.user_id = r.id WHERE u.idle=0 ORDER BY u.ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
 	while ($pun_user_online = $db->fetch_assoc($result))
 	{
 		if ($pun_user_online['user_id'] > 1)
@@ -35,7 +35,7 @@ if ($pun_config['o_users_online'] == '1')
 		}
 		else
 		{
-			if ($pun_user_online['bot_ident']) 	++$num_bots; else ++$num_guests;
+			if ($pun_user_online['is_bot']) 	++$num_bots; else ++$num_guests;
 		}
 	}
 	//$num_guests = $num_guests - $num_bots;
@@ -64,7 +64,7 @@ if ($pun_config['o_users_online'] == '1')
 
 //########### MOST ONLINE START
 	$rnum_guests = $rnum_users = $rnum_bots = 0;
-	$result = $db->query('SELECT user_id, ident, bot_ident FROM '.$db->prefix.'online WHERE idle=0 ORDER BY ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
+	$result = $db->query('SELECT user_id, ident, is_bot FROM '.$db->prefix.'online WHERE idle=0 ORDER BY ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
 
 	while ($pun_user_online = $db->fetch_assoc($result))
 	{
@@ -72,7 +72,7 @@ if ($pun_config['o_users_online'] == '1')
 			++$rnum_users;
 		else
 		{
-			if ($pun_user_online['bot_ident'])	++$rnum_bots;	else ++$rnum_guests;
+			if ($pun_user_online['is_bot'])	++$rnum_bots;	else ++$rnum_guests;
 		}
 	}
 	$rnum_total = $rnum_users + $rnum_guests;
