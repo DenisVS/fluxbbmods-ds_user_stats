@@ -16,9 +16,15 @@ $lang_admin_DS_User_Online = array(
 'Examples 15m'			=>	'Examples: 15m = 15 minutes ; 2h = 2 hours',
 'Show most online'		=>	'Show most users online',
 'Most online at time'	=>	'Show most users online at one time.',
-'group color'			=>	'group color',
+'Group color'			=>	'Group color',
 'Group color for'		=>	'Group color for',
 'Leave blank'			=>	'Leave FFFFFF to use forum default.',
+'Show past online for group'			=>	'Show past online for group',
+'Show past online'			=>	'Show past online',
+'Show online today for group'			=>	'Show online today for group',
+'Show online today'			=>	'Show online today',
+'Show Legend for group'			=>	'Show Legend for group',
+'Show Legend'			=>	'Show Legend',
 //''		=>	'',
 
 

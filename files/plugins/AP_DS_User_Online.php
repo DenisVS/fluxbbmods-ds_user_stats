@@ -228,21 +228,21 @@ while ($row = $result->fetch_assoc()) {
 								<tr>
 									<th scope="row"><?php echo $row["g_title"];?></th>
 									<td>
-										<input maxlength="6" size="6" class="jscolor" type="text" name="groupColor[<?php echo $row["g_id"];?>]" id="ourFormId1" title="Our title" value="<?php echo((isset($ds_stats_conf['group_color'][$row["g_id"]])) ? ($ds_stats_conf['group_color'][$row["g_id"]]) : ''); ?>"/>   <?php echo $lang_admin_DS_User_Online['Group color for'];?> <?php echo $row["g_title"];?>. <?php echo $lang_admin_DS_User_Online['Leave blank'];?>
+										<input maxlength="6" size="6" class="jscolor" type="text" name="groupColor[<?php echo $row["g_id"];?>]" id="ourFormId1" title="<?php echo $lang_admin_DS_User_Online['Group color for'];?> <?php echo $row["g_title"];?>. <?php echo $lang_admin_DS_User_Online['Leave blank'];?>" value="<?php echo((isset($ds_stats_conf['group_color'][$row["g_id"]])) ? ($ds_stats_conf['group_color'][$row["g_id"]]) : ''); ?>"/>   <?php echo $lang_admin_DS_User_Online['Group color'];?>  
 									</td>
 									<td>
-										<input type="checkbox" name="pastOnlineShow[<?php echo $row["g_id"];?>]" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['past_online_show'][$row["g_id"]])) ? (($ds_stats_conf['past_online_show'][$row["g_id"]] == 1) ? 'checked="checked"' : false ) : false); ?>/> Show past online
+										<input type="checkbox" name="pastOnlineShow[<?php echo $row["g_id"];?>]" id="ourFormId1" title="<?php echo $lang_admin_DS_User_Online['Show past online for group'];?> <?php echo $row["g_title"];?>" value="1" <?php echo((isset($ds_stats_conf['past_online_show'][$row["g_id"]])) ? (($ds_stats_conf['past_online_show'][$row["g_id"]] == 1) ? 'checked="checked"' : false ) : false); ?>/> <?php echo $lang_admin_DS_User_Online['Show past online'];?>
 										
 									</td>
 						
 									<td>
-										<input type="checkbox" name="todayShow[<?php echo $row["g_id"];?>]" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['today_show'][$row["g_id"]])) ? (($ds_stats_conf['today_show'][$row["g_id"]] == 1) ? 'checked="checked"' : false ) : false); ?>/> Show online today 
+										<input type="checkbox" name="todayShow[<?php echo $row["g_id"];?>]" id="ourFormId1" title="<?php echo $lang_admin_DS_User_Online['Show online today for group'];?> <?php echo $row["g_title"];?>" value="1" <?php echo((isset($ds_stats_conf['today_show'][$row["g_id"]])) ? (($ds_stats_conf['today_show'][$row["g_id"]] == 1) ? 'checked="checked"' : false ) : false); ?>/> <?php echo $lang_admin_DS_User_Online['Show online today'];?>
 										
 									</td>
 								
 									
 									<td>
-										<input type="checkbox" name="showLegend[<?php echo $row["g_id"];?>]" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['show_legend'][$row["g_id"]])) ? (($ds_stats_conf['show_legend'][$row["g_id"]] == 1) ? 'checked="checked"' : false ) : false); ?>/>  Show Legend
+										<input type="checkbox" name="showLegend[<?php echo $row["g_id"];?>]" id="ourFormId1" title="<?php echo $lang_admin_DS_User_Online['Show Legend for group'];?> <?php echo $row["g_title"];?>" value="1" <?php echo((isset($ds_stats_conf['show_legend'][$row["g_id"]])) ? (($ds_stats_conf['show_legend'][$row["g_id"]] == 1) ? 'checked="checked"' : false ) : false); ?>/> <?php echo $lang_admin_DS_User_Online['Show Legend'];?> 
 									</td>
 									
 									
