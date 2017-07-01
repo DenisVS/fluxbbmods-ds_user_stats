@@ -1,5 +1,5 @@
 <?php
-//$Id:$
+//$Id$
 //define('PUN_DEBUG', 1);
 define('PUN_SHOW_QUERIES', 1);
 ini_set('display_errors', 1);

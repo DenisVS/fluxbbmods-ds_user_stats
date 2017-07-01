@@ -1,5 +1,5 @@
 <?php
-// $Id
+//$Id$
 // Load the ds_stats.php language file
 if (file_exists(PUN_ROOT.'lang/'.$pun_user['language'].'/ds_stats.php'))
 	require PUN_ROOT.'lang/'.$pun_user['language'].'/ds_stats.php';
@@ -305,7 +305,8 @@ if ($pun_config['o_users_online'] == '1')
 	if (count($users_today) > 0) 
 		echo "\t\t\t".'<dl id="onlinelist" class="clearb">'."\n\t\t\t\t".'<dt>'.$lang_usersonline['Online today'].': </dt>'.implode(',</dd> ', $users_today).'</dd>'."\n\t\t\t".'</dl>'."\n";
 
-	if ($pun_user['g_view_users'] == '1')
+
+if (isset($ds_stats_conf['show_legend'][$pun_user['group_id']]) && $ds_stats_conf['show_legend'][$pun_user['group_id']] == 1)
 	{
 		echo '			<div style="TEXT-ALIGN: center; FONT-SIZE: 0.8em"><hr size="1" style="margin:0;">';
 		echo "\t\t\t\t".$lang_usersonline['Legend'].' ';

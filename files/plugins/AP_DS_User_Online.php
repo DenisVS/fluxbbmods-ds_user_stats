@@ -1,5 +1,5 @@
 <?php
- 
+//$Id$ 
 /**
  * Copyright (C) 2008-2012 FluxBB
  * based on code by Rickard Andersson copyright (C) 2002-2008 PunBB
