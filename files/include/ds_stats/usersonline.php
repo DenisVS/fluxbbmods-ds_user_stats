@@ -104,7 +104,10 @@ if ($pun_config['o_users_online'] == '1')
 	//########### MOST ONLINE END
 
 	//########### PAST ONLINE START
-	if ($ds_stats_conf['past_online_enable'])
+	//if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>'; var_dump ($pun_user['group_id']); echo '</pre>';
+	//if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>'; var_dump ($ds_stats_conf['past_online_show'][$pun_user['group_id']]); echo '</pre>';
+	//if ($ds_stats_conf['past_online_enable'])
+	if ($ds_stats_conf['past_online_enable'] && isset($ds_stats_conf['past_online_show'][$pun_user['group_id']]) && $ds_stats_conf['past_online_show'][$pun_user['group_id']] == 1)
 	{
 		$num_guests_ot = 0;
 		$users_ot = array();
@@ -291,6 +294,8 @@ if ($pun_config['o_users_online'] == '1')
 		}
 	}
 	// users online today 
+		if (isset($ds_stats_conf['today_show'][$pun_user['group_id']]) && $ds_stats_conf['today_show'][$pun_user['group_id']] == 1)
+	{
 	$date = getdate(time() + $diff);
 	$todaystamp = mktime(0, 0, 0, $date['mon'], $date['mday'], $date['year']);
 	$result = $db->query('SELECT username, id, group_id, last_visit from '.$db->prefix.'users WHERE last_visit >= '.$todaystamp.' ORDER by last_visit DESC') or error('Unable to find the list of the users online today', __FILE__, __LINE__, $db->error());
@@ -304,7 +309,7 @@ if ($pun_config['o_users_online'] == '1')
 	}
 	if (count($users_today) > 0) 
 		echo "\t\t\t".'<dl id="onlinelist" class="clearb">'."\n\t\t\t\t".'<dt>'.$lang_usersonline['Online today'].': </dt>'.implode(',</dd> ', $users_today).'</dd>'."\n\t\t\t".'</dl>'."\n";
-
+}
 
 if (isset($ds_stats_conf['show_legend'][$pun_user['group_id']]) && $ds_stats_conf['show_legend'][$pun_user['group_id']] == 1)
 	{

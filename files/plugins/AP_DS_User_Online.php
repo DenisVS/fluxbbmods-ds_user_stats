@@ -51,7 +51,7 @@ generate_config_cache();
 //generate_config_cache();
 	 
 	 
-	// echo '<pre>'; var_dump ($_POST); echo '</pre>';
+	 echo '<pre>'; var_dump ($_POST); echo '</pre>';
 	 
 	 
 	 
@@ -65,10 +65,10 @@ generate_config_cache();
 	 
 	$ds_stats_conf['online_enabled'] = (isset($_POST["modStatus"]) ? $_POST["modStatus"] : 0);
 	$ds_stats_conf['topic_colors'] = (isset($_POST["topicColors"]) ? $_POST["topicColors"] : 0);
-	$ds_stats_conf['past_online_enable'] = (isset($_POST["pastOnlineEnable"]) ? $_POST["pastOnlineEnable"] : 0);
 	$ds_stats_conf['past_online_time'] = (isset($_POST["pastOnlineTime"]) ? $_POST["pastOnlineTime"] : 0);
 	$ds_stats_conf['most_online'] = (isset($_POST["mostOnline"]) ? $_POST["mostOnline"] : 0);
 
+if (isset($ds_stats_conf['show_legend'])) {unset ($ds_stats_conf['show_legend']);}
 if (isset ($_POST["showLegend"]))
 {
   foreach ($_POST["showLegend"] as $g_id => $legendStatus)	
@@ -76,9 +76,33 @@ if (isset ($_POST["showLegend"]))
 	  $ds_stats_conf['show_legend'][$g_id] = $legendStatus;
 	}
 } 
+
+
+  $ds_stats_conf['past_online_enable'] = (isset($_POST["pastOnlineEnable"]) ? $_POST["pastOnlineEnable"] : 0);
+	if (isset($ds_stats_conf['past_online_show'])) {unset ($ds_stats_conf['past_online_show']);}
+  if (isset ($_POST["pastOnlineShow"]))
+  {
+    foreach ($_POST["pastOnlineShow"] as $g_id => $pastOnlineStatus)	
+    {
+      $ds_stats_conf['past_online_show'][$g_id] = $pastOnlineStatus;
+    }
+  } 
+
+
+
+	if (isset($ds_stats_conf['today_show'])) {unset ($ds_stats_conf['today_show']);}
+  if (isset ($_POST["todayShow"]))
+  {
+    foreach ($_POST["todayShow"] as $g_id => $todayStatus)	
+    {
+      $ds_stats_conf['today_show'][$g_id] = $todayStatus;
+    }
+  } 
+
+
 	// echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
 
-	$ds_stats_conf['show_legend'] = (isset($_POST["showLegend"]) ? $_POST["showLegend"] : 0);
+	//$ds_stats_conf['show_legend'] = (isset($_POST["showLegend"]) ? $_POST["showLegend"] : 0);
 
 	foreach ($_POST["groupColor"] as $g_id => $val) {
 		$ds_stats_conf['group_color'][$g_id] = $val;
@@ -207,9 +231,23 @@ while ($row = $result->fetch_assoc()) {
 										<input maxlength="6" size="6" class="jscolor" type="text" name="groupColor[<?php echo $row["g_id"];?>]" id="ourFormId1" title="Our title" value="<?php echo((isset($ds_stats_conf['group_color'][$row["g_id"]])) ? ($ds_stats_conf['group_color'][$row["g_id"]]) : ''); ?>"/>   <?php echo $lang_admin_DS_User_Online['Group color for'];?> <?php echo $row["g_title"];?>. <?php echo $lang_admin_DS_User_Online['Leave blank'];?>
 									</td>
 									<td>
-										<input type="checkbox" name="showLegend[<?php echo $row["g_id"];?>]" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['show_legend'][$row["g_id"]])) ? (($ds_stats_conf['show_legend'][$row["g_id"]] == 1) ? 'checked="checked"' : false ) : false); ?>/>  Show Legend
+										<input type="checkbox" name="pastOnlineShow[<?php echo $row["g_id"];?>]" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['past_online_show'][$row["g_id"]])) ? (($ds_stats_conf['past_online_show'][$row["g_id"]] == 1) ? 'checked="checked"' : false ) : false); ?>/> Show past online
 										
 									</td>
+						
+									<td>
+										<input type="checkbox" name="todayShow[<?php echo $row["g_id"];?>]" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['today_show'][$row["g_id"]])) ? (($ds_stats_conf['today_show'][$row["g_id"]] == 1) ? 'checked="checked"' : false ) : false); ?>/> Show online today 
+										
+									</td>
+								
+									
+									<td>
+										<input type="checkbox" name="showLegend[<?php echo $row["g_id"];?>]" id="ourFormId1" title="Our title" value="1" <?php echo((isset($ds_stats_conf['show_legend'][$row["g_id"]])) ? (($ds_stats_conf['show_legend'][$row["g_id"]] == 1) ? 'checked="checked"' : false ) : false); ?>/>  Show Legend
+									</td>
+									
+									
+									
+									
 								</tr>
 
 <?php
