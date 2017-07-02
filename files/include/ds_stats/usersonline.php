@@ -23,9 +23,10 @@ if ($pun_config['o_users_online'] == '1')
 	// Fetch users online info and generate strings for output
 	$num_guests = $num_bots = 0;
 	$users = array();
-	$result = $db->query('SELECT u.user_id, u.ident, r.group_id FROM '.$db->prefix.'online as u LEFT JOIN '.$db->prefix.'users as r ON u.user_id = r.id WHERE u.idle=0 ORDER BY u.ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
-	while ($pun_user_online = $db->fetch_assoc($result))
+	$result_online = $db->query('SELECT u.user_id, u.ident, r.group_id FROM '.$db->prefix.'online as u LEFT JOIN '.$db->prefix.'users as r ON u.user_id = r.id WHERE u.idle=0 ORDER BY u.ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
+	while ($pun_user_online = $db->fetch_assoc($result_online))
 	{
+    $all_users_online[] = $pun_user_online;
 		if ($pun_user_online['user_id'] > 1)
 		{
 			if ($pun_user['g_view_users'] == '1')
@@ -64,9 +65,10 @@ if ($pun_config['o_users_online'] == '1')
 
 //########### MOST ONLINE START
 	$rnum_guests = $rnum_users = $rnum_bots = 0;
-	$result = $db->query('SELECT user_id, ident FROM '.$db->prefix.'online WHERE idle=0 ORDER BY ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
-
-	while ($pun_user_online = $db->fetch_assoc($result))
+	//$result_online = $db->query('SELECT user_id, ident FROM '.$db->prefix.'online WHERE idle=0 ORDER BY ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
+	$pun_user_online = $all_users_online;
+	unset ($all_users_online);
+	//while ($pun_user_online = $db->fetch_assoc($result_online))
 	{
 		if ($pun_user_online['user_id'] > 1)
 			++$rnum_users;
@@ -104,9 +106,6 @@ if ($pun_config['o_users_online'] == '1')
 	//########### MOST ONLINE END
 
 	//########### PAST ONLINE START
-	//if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>'; var_dump ($pun_user['group_id']); echo '</pre>';
-	//if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>'; var_dump ($ds_stats_conf['past_online_show'][$pun_user['group_id']]); echo '</pre>';
-	//if ($ds_stats_conf['past_online_enable'])
 	if ($ds_stats_conf['past_online_enable'] && isset($ds_stats_conf['past_online_show'][$pun_user['group_id']]) && $ds_stats_conf['past_online_show'][$pun_user['group_id']] == 1)
 	{
 		$num_guests_ot = 0;
