@@ -335,10 +335,22 @@ if ($pun_config['o_users_online'] == '1')
 
 if (isset($ds_stats_conf['show_legend'][$pun_user['group_id']]) && $ds_stats_conf['show_legend'][$pun_user['group_id']] == 1)
 	{
+	
+    // Caching of legend
+    if (file_exists(FORUM_CACHE_DIR.'cache_ds_stats_legend.php'))
+    {
+        include FORUM_CACHE_DIR.'cache_ds_stats_legend.php';
+    }
+    else  
+    {
+        generate_ds_stats_legend_cache();
+        include FORUM_CACHE_DIR.'cache_ds_stats_legend.php';
+    }
+    // Caching end
+	
 		echo '			<div style="TEXT-ALIGN: center; FONT-SIZE: 0.8em"><hr size="1" style="margin:0;">';
 		echo "\t\t\t\t".$lang_usersonline['Legend'].' ';
-		$result = $db->query('SELECT g_id, g_title FROM '.$db->prefix.'groups WHERE g_id != 3 ORDER BY g_id') or error('Unable to fetch user group list', __FILE__, __LINE__, $db->error());
-		while ($cur_group = $db->fetch_assoc($result))
+		foreach ($legend as $cur_group)
 		{
 			$usersonline_group = $cur_group['g_title'];
 			echo '[<a '.((isset($ds_stats_conf['group_color'][$cur_group['g_id']]) && $ds_stats_conf['topic_colors'] == '1') ? ' style="COLOR: #'.$ds_stats_conf['group_color'][$cur_group['g_id']].'"' : '').' href="userlist.php?show_group='.$cur_group['g_id'].'">'.$usersonline_group.'</a>] ';

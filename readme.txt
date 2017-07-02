@@ -1,3 +1,25 @@
+admin_groups.php
+
+FIND
+
+if ($pun_user['g_id'] != PUN_ADMIN)
+	message($lang_common['No permission']);
+
+ADD,AFTER
+
+if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
+    require PUN_ROOT.'include/cache.php';
+
+FIND
+
+generate_admin_menu('groups');
+
+ADD,AFTER EACH ENTRY!
+
+generate_ds_stats_legend_cache();
+
+
+
 
 
 
@@ -33,5 +55,20 @@ function generate_ds_stats_today_cache($todaystamp, $online_list)
 	// Output list as PHP code
 	$content = '<?php'."\n\n".'define(\'ATTENDED_TODAY_LOADED\', 1);'."\n\n".'$attended_ids = '.var_export($attended_ids, true).';'."\n\n".'$attended_today = '.var_export($attended_today, true).';'."\n\n".'?>';
 	fluxbb_write_cache_file('cache_ds_stats_today.php', $content);
+}
+
+//
+// Generate the stats legend PHP script
+//
+function generate_ds_stats_legend_cache()
+{
+	global $db;
+  $result = $db->query('SELECT g_id, g_title FROM '.$db->prefix.'groups WHERE g_id != 3 ORDER BY g_id') or error('Unable to fetch user group list', __FILE__, __LINE__, $db->error());
+		while ($cur_group = $db->fetch_assoc($result))
+      $legend[] = $cur_group;
+
+	// Output list as PHP code
+	$content = '<?php'."\n\n".'define(\'LEGEND_LOADED\', 1);'."\n\n".'$legend = '.var_export($legend, true).';'."\n\n".'?>';
+	fluxbb_write_cache_file('cache_ds_stats_legend.php', $content);
 }
 
