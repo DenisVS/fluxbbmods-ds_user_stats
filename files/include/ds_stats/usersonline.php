@@ -24,21 +24,23 @@ if ($pun_config['o_users_online'] == '1')
 	$num_guests = $num_bots = 0;
 	$users = array();
 	$result_online = $db->query('SELECT u.user_id, u.ident, r.group_id FROM '.$db->prefix.'online as u LEFT JOIN '.$db->prefix.'users as r ON u.user_id = r.id WHERE u.idle=0 ORDER BY u.ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
-	while ($pun_user_online = $db->fetch_assoc($result_online))
+
+	while ($current_user_online = $db->fetch_assoc($result_online))
 	{
-    $all_users_online[] = $pun_user_online;
-		if ($pun_user_online['user_id'] > 1)
+    $all_users_online[] = $current_user_online;
+		if ($current_user_online['user_id'] > 1)
 		{
 			if ($pun_user['g_view_users'] == '1')
-				$users[] = "\n\t\t\t\t".'<dd><a '.((isset($ds_stats_conf['group_color'][$pun_user_online['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$pun_user_online['group_id']].'" ' : '').'href="profile.php?id='.$pun_user_online['user_id'].'">'.pun_htmlspecialchars($pun_user_online['ident']).'</a>';
+				$users[] = "\n\t\t\t\t".'<dd><a '.((isset($ds_stats_conf['group_color'][$current_user_online['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$current_user_online['group_id']].'" ' : '').'href="profile.php?id='.$current_user_online['user_id'].'">'.pun_htmlspecialchars($current_user_online['ident']).'</a>';
 			else
-				$users[] = "\n\t\t\t\t".'<dd><span '.((isset($ds_stats_conf['group_color'][$pun_user_online['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$pun_user_online['group_id']].'" ' : '').'">'.pun_htmlspecialchars($pun_user_online['ident']).'</span>';
+				$users[] = "\n\t\t\t\t".'<dd><span '.((isset($ds_stats_conf['group_color'][$current_user_online['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$current_user_online['group_id']].'" ' : '').'">'.pun_htmlspecialchars($current_user_online['ident']).'</span>';
 		}
 		else
 		{
-			if (strpos($pun_user_online['ident'], '[Bot]') !== false) 	++$num_bots; else ++$num_guests;
+			if (strpos($current_user_online['ident'], '[Bot]') !== false) 	++$num_bots; else ++$num_guests;
 		}
 	}
+
 	//$num_guests = $num_guests - $num_bots;
 	$num_users = count($users);
 	$bots_dsp = ($num_bots == "1") ? $lang_usersonline['Bot single'] : $lang_usersonline['Bots plural'];
@@ -65,17 +67,13 @@ if ($pun_config['o_users_online'] == '1')
 
 //########### MOST ONLINE START
 	$rnum_guests = $rnum_users = $rnum_bots = 0;
-	//$result_online = $db->query('SELECT user_id, ident FROM '.$db->prefix.'online WHERE idle=0 ORDER BY ident', true) or error('Unable to fetch online list', __FILE__, __LINE__, $db->error());
-	$pun_user_online = $all_users_online;
-	unset ($all_users_online);
-	//while ($pun_user_online = $db->fetch_assoc($result_online))
-	foreach ($pun_user_online as $user_id => $value)
+	foreach ($all_users_online as $user_id => $value)
 	{
-		if ($pun_user_online[$user_id] > 1)
+		if ($all_users_online[$user_id] > 1)
 			++$rnum_users;
 		else
 		{
- 			if (strpos($pun_user_online['ident'], '[Bot]') !== false) 	++$rnum_bots; else ++$rnum_guests;
+ 			if (strpos($all_users_online['ident'], '[Bot]') !== false) 	++$rnum_bots; else ++$rnum_guests;
 		}
 	}
 	$rnum_total = $rnum_users + $rnum_guests;
@@ -173,8 +171,7 @@ if ($pun_config['o_users_online'] == '1')
 			}
 		}
 		$result2 = $db->query('SELECT DISTINCT u.username, u.userid, u.userip, r.group_id FROM '.$db->prefix.'userstats AS u LEFT JOIN '.$db->prefix.'users as r ON u.userid = r.id WHERE u.date >='.$period_check.' AND u.browser <> \'Robot\' ORDER BY u.userip') or error('Unable to fetch user stats', __FILE__, __LINE__, $db->error());
-		$jj_userip_pre = "nantsoke"; // Just some random text for initialization
-		$jj_userid_pre = "nantsoke"; // Just some random text for initialization
+		$jj_userip_pre = $jj_userid_pre = "nantsoke"; // Just some random text for initialization
 		$jj_userids = array(); // Initialize array
 		$count_guest = $count_user = $deleteby = $count_row = $countj = 0;
 		$first_occur = 1;
@@ -245,6 +242,7 @@ if ($pun_config['o_users_online'] == '1')
 			$jj_userip_pre = $jj_userip;
 		}
 		$num_users_ot = count($users_ot);
+
 	//########### PAST ONLINE END
 
 		echo '			<div class="clearer"></div>';
