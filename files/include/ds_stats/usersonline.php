@@ -69,8 +69,9 @@ if ($pun_config['o_users_online'] == '1')
 	$pun_user_online = $all_users_online;
 	unset ($all_users_online);
 	//while ($pun_user_online = $db->fetch_assoc($result_online))
+	foreach ($pun_user_online as $user_id => $value)
 	{
-		if ($pun_user_online['user_id'] > 1)
+		if ($pun_user_online[$user_id] > 1)
 			++$rnum_users;
 		else
 		{
