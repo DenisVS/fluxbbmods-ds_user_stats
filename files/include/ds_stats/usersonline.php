@@ -5,6 +5,9 @@ if (file_exists(PUN_ROOT.'lang/'.$pun_user['language'].'/ds_stats.php'))
 	require PUN_ROOT.'lang/'.$pun_user['language'].'/ds_stats.php';
 else
 	require PUN_ROOT.'lang/English/ds_stats.php';
+
+if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
+    require PUN_ROOT.'include/cache.php';
 ?>
 <div id="brdstats" class="block">
 	<h2><span><?php echo $lang_index['Board info'] ?></span></h2>
@@ -85,8 +88,6 @@ if ($pun_config['o_users_online'] == '1')
 		$result = $db->query('INSERT INTO '.$db->prefix.'config 
 		(conf_name, conf_value) VALUES (\'o_ds_stats\', \''.preg_replace('~\R~u', "\n", trim(serialize($ds_stats_conf))).'\') 
 		ON DUPLICATE KEY UPDATE conf_value=\''.preg_replace('~\R~u', "\n", trim(serialize($ds_stats_conf))).'\'') or error('Unable to update config', __FILE__, __LINE__, $db->error());
-		if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
-			require PUN_ROOT.'include/cache.php';
 
 		generate_config_cache();	// Regenerate the config cache
 	}
@@ -296,9 +297,32 @@ if ($pun_config['o_users_online'] == '1')
 	{
 	$date = getdate(time() + $diff);
 	$todaystamp = mktime(0, 0, 0, $date['mon'], $date['mday'], $date['year']);
-	$result = $db->query('SELECT username, id, group_id, last_visit from '.$db->prefix.'users WHERE last_visit >= '.$todaystamp.' ORDER by last_visit DESC') or error('Unable to find the list of the users online today', __FILE__, __LINE__, $db->error());
+	
+  // Caching of online today
+  if (file_exists(FORUM_CACHE_DIR.'cache_ds_stats_today.php'))
+  {
+      include FORUM_CACHE_DIR.'cache_ds_stats_today.php';
+  }
+  else  
+  {
+      generate_ds_stats_today_cache($todaystamp, $all_users_online);
+      include FORUM_CACHE_DIR.'cache_ds_stats_today.php';
+  }
+  foreach ($all_users_online  as $current_user_online) 
+  {
+      if ($current_user_online["user_id"] != 1) 
+      {
+          if (!isset($attended_ids[$current_user_online['user_id']])) 
+          {
+              generate_ds_stats_today_cache($todaystamp, $all_users_online);
+              include FORUM_CACHE_DIR.'cache_ds_stats_today.php';
+          }
+      }
+  }
+  // Caching end
+
 	$users_today = array();
-	while ($user_online_today = $db->fetch_assoc($result))
+	foreach ($attended_today as $user_online_today)
 	{
 		if ($pun_user['g_view_users'] == '1')
 			$users_today[] =  "\n\t\t\t\t".'<dd><a '.((isset($ds_stats_conf['group_color'][$user_online_today['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$user_online_today['group_id']].'" ' : '').' href="profile.php?id='.$user_online_today['id'].'" title="'.sprintf($lang_usersonline['Last visit'], pun_htmlspecialchars($user_online_today['username']), format_time($user_online_today['last_visit'])).'">'.pun_htmlspecialchars($user_online_today['username']).'</a>';
