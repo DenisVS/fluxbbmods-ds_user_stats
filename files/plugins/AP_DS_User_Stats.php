@@ -315,11 +315,14 @@ foreach ($ds_stats_conf['bots'] as $botName => $botStatus) {
 			</form>
 
 <?php	//Check if bot from log in our list, we unset it
-foreach ($robotsList as $botName => $botStatus) {	
-	if  (isset($ds_stats_conf['bots'][$botName]))
-	{
-		unset ($robotsList[$botName]);
-	}
+if (isset($robotsList))
+{
+  foreach ($robotsList as $botName => $botStatus) {	
+    if  (isset($ds_stats_conf['bots'][$botName]))
+    {
+      unset ($robotsList[$botName]);
+    }
+  }
 }
 ?>
 <hr>
