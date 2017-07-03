@@ -88,7 +88,7 @@ function generate_ds_stats_legend_cache()
 //
 // Generate the stats past online cache PHP script
 //
-function generate_ds_stats_past_cache($period_check, $period_unit, $between_queries, $num_entries_count_bak)
+function generate_ds_stats_past_cache($period_check, $period_unit, $ttl_past_cache, $num_entries_count_bak)
 {
 	global $db;
 		$result = $db->query('SELECT MIN(date) AS mindate FROM '.$db->prefix.'userstats') or error('Unable to fetch minimum date from userstats table', __FILE__, __LINE__, $db->error());
@@ -126,7 +126,7 @@ function generate_ds_stats_past_cache($period_check, $period_unit, $between_quer
     $users_past_online[] = $pun_user_online;
 
 	// Output list past online as PHP code
-	$content = '<?php'."\n\n".'define(\'PAST_ONLINE_LOADED\', 1);'."\n\n".'$users_past_online = '.var_export($users_past_online, true).';'."\n\n".'$period_min = '.var_export($period_min, true).';'."\n".'$num_entries_count = '.var_export($num_entries_count, true).";\n".'$between_queries = '.var_export($between_queries, true).";\n".'$num_entries_count_bak = '.var_export($num_entries_count_bak, true).";\n".'$past_timestamp = '.var_export(time(), true).";\n\n".'?>';
+	$content = '<?php'."\n\n".'define(\'PAST_ONLINE_LOADED\', 1);'."\n\n".'$users_past_online = '.var_export($users_past_online, true).';'."\n\n".'$period_min = '.var_export($period_min, true).';'."\n".'$num_entries_count = '.var_export($num_entries_count, true).";\n".'$ttl_past_cache = '.var_export($ttl_past_cache, true).";\n".'$num_entries_count_bak = '.var_export($num_entries_count_bak, true).";\n".'$past_timestamp = '.var_export(time(), true).";\n\n".'?>';
 	fluxbb_write_cache_file('cache_ds_stats_past.php', $content);
 }
 

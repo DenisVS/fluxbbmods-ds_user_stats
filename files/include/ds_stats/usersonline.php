@@ -193,24 +193,24 @@ if ($pun_config['o_users_online'] == '1')
 		$first_occur = 1;
 		//$num_entries_count = $db->num_rows($result2);	// Count entries
 
-if (time() > ($past_timestamp + $between_queries))
+if (time() > ($past_timestamp + $ttl_past_cache))
 {
   
-  if (!isset ($between_queries) || $between_queries == 0)
-    $between_queries = 120;
+  if (!isset ($ttl_past_cache) || $ttl_past_cache == 0)
+    $ttl_past_cache = 120;
 
   if  (abs(($num_entries_count + $num_entries_count_bak) / 2 - $num_entries_count) > 1)
   {
-    $between_queries = intval($between_queries / 2);
+    $ttl_past_cache = intval($ttl_past_cache / 2);
   }
   else if (abs(($num_entries_count + $num_entries_count_bak) / 2 - $num_entries_count) < 1) 
   {
-    $between_queries = intval($between_queries * 1.5 + 1);
+    $ttl_past_cache = intval($ttl_past_cache * 1.5 + 1);
   }
   else
-    $between_queries = intval($between_queries * 1.1 + 0.9);
+    $ttl_past_cache = intval($ttl_past_cache * 1.1 + 0.9);
  
-  generate_ds_stats_past_cache($period_check, $period_unit, $between_queries, $num_entries_count);
+  generate_ds_stats_past_cache($period_check, $period_unit, $ttl_past_cache, $num_entries_count);
 }
 //if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>$users_past_online: '; var_dump ($users_past_online); echo '</pre>';
 
