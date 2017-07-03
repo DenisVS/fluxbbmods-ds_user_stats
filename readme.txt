@@ -30,10 +30,11 @@ include/cache.php
 
 # ADD AT THE END
 
+
 //
-// Generate the stats cache PHP script
+// Generate the stats today cache PHP script
 //
-function generate_ds_stats_today_cache($todaystamp, $online_list)
+function generate_ds_stats_today_cache($todaystamp, $online_list, $new_user_id = false)
 {
 	global $db;
 
@@ -46,16 +47,17 @@ function generate_ds_stats_today_cache($todaystamp, $online_list)
   // flipp array - get users tuday. Keys is ID.
   foreach ($attended_today  as $current_user_today) 
   {
-    
     if ($current_user_today["id"] != 1) 
     {
       $attended_ids[$current_user_today['id']] = true;
     }
   }
+  if ($new_user_id != false) $attended_ids[$new_user_id] = true; // to avoid refreshing until new user off
 	// Output list as PHP code
 	$content = '<?php'."\n\n".'define(\'ATTENDED_TODAY_LOADED\', 1);'."\n\n".'$attended_ids = '.var_export($attended_ids, true).';'."\n\n".'$attended_today = '.var_export($attended_today, true).';'."\n\n".'?>';
 	fluxbb_write_cache_file('cache_ds_stats_today.php', $content);
 }
+
 
 //
 // Generate the stats legend PHP script
@@ -71,7 +73,6 @@ function generate_ds_stats_legend_cache()
 	$content = '<?php'."\n\n".'define(\'LEGEND_LOADED\', 1);'."\n\n".'$legend = '.var_export($legend, true).';'."\n\n".'?>';
 	fluxbb_write_cache_file('cache_ds_stats_legend.php', $content);
 }
-
 
 //
 // Generate the stats past online cache PHP script

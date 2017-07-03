@@ -344,7 +344,7 @@ foreach ($users_past_online as $pun_user_online)
   }
   else  
   {
-      generate_ds_stats_today_cache($todaystamp, $all_users_online);
+      generate_ds_stats_today_cache($todaystamp, $all_users_online, false);
       include FORUM_CACHE_DIR.'cache_ds_stats_today.php';
   }
   foreach ($all_users_online  as $current_user_online) 
@@ -353,7 +353,7 @@ foreach ($users_past_online as $pun_user_online)
       {
           if (!isset($attended_ids[$current_user_online['user_id']])) 
           {
-              generate_ds_stats_today_cache($todaystamp, $all_users_online);
+              generate_ds_stats_today_cache($todaystamp, $all_users_online, $attended_ids[$current_user_online['user_id']]);
               include FORUM_CACHE_DIR.'cache_ds_stats_today.php';
           }
       }
