@@ -34,10 +34,18 @@
 ##
 ##
 
-//todo
 
-Изменение базы записать
-
+Users Current Position Online
+Mod version:  1.7
+Исключть шаги
+12
+13
+14
+15
+16
+17
+18
+19
 
 
 #
