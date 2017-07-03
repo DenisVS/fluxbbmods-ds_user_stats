@@ -37,10 +37,18 @@
 //todo
 
 Изменение базы записать
-viewtopic.php
-index.php
-footer.php
-Из старого мода
+
+*Поиск по словам:
+ds_
+stat
+online
+
+*Проверить файлы
+viewtopic.php ОК
+index.php OK
+footer.php ОК
+
+*Из старого мода readme вычитка
 
 #
 #---------[ 1. UPLOAD ]-------------------------------------------------------
@@ -365,5 +373,110 @@ function update_users_online()
 }
 
 
+#
+#---------[ . OPEN ]---------------------------------------------------------
+#
 
+viewtopic.php
+
+#
+#---------[ . FIND (line: ) ]---------------------------------------------
+#
+
+define('PUN_ROOT', './');
+require PUN_ROOT.'include/common.php';
+
+#
+#---------[ . AFTER, ADD ]---------------------------------------------------
+#
+
+
+$ds_stats_conf = unserialize($pun_config['o_ds_stats']);
+
+#
+#---------[ . FIND (line: ) ]---------------------------------------------
+#
+
+define('PUN_ALLOW_INDEX', 1);
+define('PUN_ACTIVE_PAGE', 'index');
+require PUN_ROOT.'header.php';
+
+#
+#---------[ . AFTER, ADD ]---------------------------------------------------
+#
+
+require PUN_ROOT.'include/ds_stats/userstats_track.php'; // Load userstats track
+
+
+#
+#---------[ . FIND (line: ) ]---------------------------------------------
+#
+
+#Здесь разобраться, формирование username
+$username
+
+#
+#---------[ . REPLACE WITH ]-------------------------------------------------
+#
+
+		// USERSONLINE MOD: Apply group color to current poster
+		$username =$cur_post['gender'].' <a '.((isset($ds_stats_conf['group_color'][$cur_post['g_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$cur_post['g_id']].'" ' : '').'href="profile.php?id='.$cur_post['poster_id'].'">'.pun_htmlspecialchars($cur_post['username']).'</a> ';
+
+
+
+Вроде всё, но надо проверить
+
+
+#
+#---------[ . OPEN ]---------------------------------------------------------
+#
+
+index.php
+
+#
+#---------[ . FIND (line: ) ]---------------------------------------------
+#
+
+define('PUN_ALLOW_INDEX', 1);
+define('PUN_ACTIVE_PAGE', 'index');
+require PUN_ROOT.'header.php';
+
+#
+#---------[ . AFTER, ADD ]---------------------------------------------------
+#
+
+require PUN_ROOT.'include/ds_stats/userstats_track.php';  // Load userstats module
+
+#
+#---------[ . FIND (line: ) ]---------------------------------------------
+#
+
+list($stats['total_topics'], $stats['total_posts']) = array_map('intval', $db->fetch_row($result));
+
+#
+#---------[ . AFTER, ADD ]---------------------------------------------------
+#
+
+
+// USERSONLINE MOD:
+$ds_stats_conf = unserialize($pun_config['o_ds_stats']);
+if ($ds_stats_conf['online_enabled'])
+{	
+	require PUN_ROOT.'include/ds_stats/usersonline.php';
+}
+else
+{
+
+#
+#---------[ . FIND (line: ) ]---------------------------------------------
+#
+
+$footer_style = 'index';
+require PUN_ROOT.'footer.php';
+
+#
+#---------[ . BEFORE, ADD ]---------------------------------------------------
+#
+
+}
 
