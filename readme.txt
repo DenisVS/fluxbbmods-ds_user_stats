@@ -34,12 +34,17 @@
 ##
 ##
 
+//todo
+
+Изменение базы записать
+viewtopic.php
+index.php
+footer.php
+Из старого мода
+
 #
 #---------[ 1. UPLOAD ]-------------------------------------------------------
 #
-
-
-
 #
 #---------[ 2. RUN ]----------------------------------------------------------
 #
@@ -207,4 +212,158 @@ function generate_ds_stats_past_cache($period_check, $period_unit, $ttl_past_cac
 	$content = '<?php'."\n\n".'define(\'PAST_ONLINE_LOADED\', 1);'."\n\n".'$users_past_online = '.var_export($users_past_online, true).';'."\n\n".'$period_min = '.var_export($period_min, true).';'."\n".'$num_entries_count = '.var_export($num_entries_count, true).";\n".'$ttl_past_cache = '.var_export($ttl_past_cache, true).";\n".'$num_entries_count_bak = '.var_export($num_entries_count_bak, true).";\n".'$past_timestamp = '.var_export(time(), true).";\n\n".'?>';
 	fluxbb_write_cache_file('cache_ds_stats_past.php', $content);
 }
+
+#
+#---------[ . OPEN ]---------------------------------------------------------
+#
+
+functions.php
+
+#
+#---------[ . FIND (line: ) ]---------------------------------------------
+#
+
+		$pun_user['is_guest'] = false;
+		$pun_user['is_admmod'] = $pun_user['g_id'] == PUN_ADMIN || $pun_user['g_moderator'] == '1';
+
+#
+#---------[ . AFTER, ADD ]---------------------------------------------------
+#
+
+		$pun_user['is_bot'] = false;
+
+
+#
+#---------[ . FIND (line: ) ]---------------------------------------------
+#
+
+function set_default_user()
+{
+	global $db, $db_type, $pun_user, $pun_config;
+ 
+	$remote_addr = get_remote_address();
+
+#
+#---------[ . BEFORE, ADD ]---------------------------------------------------
+#
+
+use Jaybizzle\CrawlerDetect\CrawlerDetect;
+
+#
+#---------[ . AFTER, ADD ]---------------------------------------------------
+#
+
+  if (!defined('FORUM_BOT_FUNCTIONS_LOADED'))
+  {
+      require_once 'include/crawler-detect/vendor/autoload.php';
+      $CrawlerDetect = new CrawlerDetect;
+      if($CrawlerDetect->isCrawler($_SERVER['HTTP_USER_AGENT']))
+      {
+            $is_bot = $CrawlerDetect->getMatches($_SERVER['HTTP_USER_AGENT']);
+            $remote_addr = $remote_addr.'[Bot]'.$is_bot;
+      }
+      define('FORUM_BOT_FUNCTIONS_LOADED', true);
+  }
+
+#
+#---------[ . FIND (line: ) ]---------------------------------------------
+#
+
+  $pun_user['is_guest'] = true;
+  $pun_user['is_admmod'] = false;
+
+#
+#---------[ . AFTER, ADD ]---------------------------------------------------
+#
+#
+        
+	$pun_user['is_bot'] = (isset($is_bot) ? $is_bot : false);
+
+#
+#---------[ . FIND (line: ) ]---------------------------------------------
+#
+
+function update_users_online()
+{
+	global $db, $pun_config;
+
+	$now = time();
+
+	// Fetch all online list entries that are older than "o_timeout_online"
+	$result = $db->query('SELECT user_id, ident, logged, idle FROM '.$db->prefix.'online WHERE logged<'.($now-$pun_config['o_timeout_online'])) or error('Unable to fetch old entries from online list', __FILE__, __LINE__, $db->error());
+	while ($cur_user = $db->fetch_assoc($result))
+	{
+		// If the entry is a guest, delete it
+		if ($cur_user['user_id'] == '1')
+			$db->query('DELETE FROM '.$db->prefix.'online WHERE ident=\''.$db->escape($cur_user['ident']).'\'') or error('Unable to delete from online list', __FILE__, __LINE__, $db->error());
+		else
+		{
+			// If the entry is older than "o_timeout_visit", update last_visit for the user in question, then delete him/her from the online list
+			if ($cur_user['logged'] < ($now-$pun_config['o_timeout_visit']))
+			{
+				$db->query('UPDATE '.$db->prefix.'users SET last_visit='.$cur_user['logged'].' WHERE id='.$cur_user['user_id']) or error('Unable to update user visit data', __FILE__, __LINE__, $db->error());
+				$db->query('DELETE FROM '.$db->prefix.'online WHERE user_id='.$cur_user['user_id']) or error('Unable to delete from online list', __FILE__, __LINE__, $db->error());
+			}
+			else if ($cur_user['idle'] == '0')
+				$db->query('UPDATE '.$db->prefix.'online SET idle=1 WHERE user_id='.$cur_user['user_id']) or error('Unable to insert into online list', __FILE__, __LINE__, $db->error());
+		}
+	}
+}
+
+#
+#---------[ . REPLACE WITH ]-------------------------------------------------
+#
+
+
+function update_users_online()
+{
+	global $db, $pun_config, $pun_user, $online_users, $online_guests, $cur_position;
+
+	$now = time();
+	$cur_o_timeout = $now - $pun_config['o_timeout_online'];
+
+	// Fetch all online list entries that are older than "o_timeout_online"
+	$result = $db->query('SELECT * FROM '.$db->prefix.'online') or error('Unable to fetch old entries from online list', __FILE__, __LINE__, $db->error());
+	while ($cur_user = $db->fetch_assoc($result))
+	{	
+	
+		if ($cur_user['logged'] < $cur_o_timeout)
+		{
+			// If the entry is a guest, delete it
+			if ($cur_user['user_id'] == '1')
+				$db->query('DELETE FROM '.$db->prefix.'online WHERE ident=\''.$db->escape($cur_user['ident']).'\'') or error('Unable to delete from online list', __FILE__, __LINE__, $db->error());
+			else
+			{
+				// If the entry is older than "o_timeout_visit", update last_visit for the user in question, then delete him/her from the online list
+				if ($cur_user['logged'] < ($now-$pun_config['o_timeout_visit']))
+				{
+					$db->query('UPDATE '.$db->prefix.'users SET last_visit='.$cur_user['logged'].' WHERE id='.$cur_user['user_id']) or error('Unable to update user visit data', __FILE__, __LINE__, $db->error());
+					$db->query('DELETE FROM '.$db->prefix.'online WHERE user_id='.$cur_user['user_id']) or error('Unable to delete from online list', __FILE__, __LINE__, $db->error());
+				}
+				else if ($cur_user['idle'] == '0')
+					$db->query('UPDATE '.$db->prefix.'online SET idle=1 WHERE user_id='.$cur_user['user_id']) or error('Unable to insert into online list', __FILE__, __LINE__, $db->error());
+			}
+		}
+		else
+		{
+			
+			if ($cur_user['user_id'] == 1)
+				$online_guests[] = $cur_user['ident'];
+			else
+				$online_users[$cur_user['user_id']] = $cur_user['ident'];
+
+		}
+	}
+	
+	if (!$pun_user['is_bot'])
+	{
+		if ($pun_user['is_guest'])
+			$db->query('UPDATE '.$db->prefix.'online SET currently = \''.$db->escape($cur_position).'\' WHERE ident=\''.$db->escape(get_remote_address()).'\'') or error('Unable to update user position in the online list1', __FILE__, __LINE__, $db->error());
+		else	
+			$db->query('UPDATE '.$db->prefix.'online SET currently= \''.$db->escape($cur_position).'\' WHERE user_id='.$pun_user['id']) or error('Unable to update user position in the online list2', __FILE__, __LINE__, $db->error());
+	}
+}
+
+
+
 
