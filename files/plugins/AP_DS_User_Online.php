@@ -6,9 +6,7 @@
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
 
-define('PUN_DEBUG', 1);
-define('PUN_SHOW_QUERIES', 1);
-ini_set('display_errors', 1);
+
  
 // Make sure no one attempts to run this script "directly"
 if (!defined('PUN'))
@@ -27,17 +25,10 @@ else
 // Tell admin_loader.php that this is indeed a plugin and that it is loaded
 define('PUN_PLUGIN_LOADED', 1);
 $ds_stats_conf = unserialize($pun_config['o_ds_stats']); 
-echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre><br /><br /><br /><br />';
-
-
-
 
 //
 // The rest is up to you!
 //
-
-
-
 
 
 // Save options
@@ -48,35 +39,20 @@ if (isset($_POST['save_options']))
  
 // Regenerate the config cache
 generate_config_cache();
-//generate_config_cache();
-	 
-	 
-	 echo '<pre>'; var_dump ($_POST); echo '</pre>';
-	 
-	 
-	 
-/*
-    ["topicColors"]=>
-	["pastOnlineEnable"]=>
-	["pastOnlineTime"]=>
-    ["mostOnline"]=>
-    ["groupColor"]=>
-	*/ 
 	 
 	$ds_stats_conf['online_enabled'] = (isset($_POST["modStatus"]) ? $_POST["modStatus"] : 0);
 	$ds_stats_conf['topic_colors'] = (isset($_POST["topicColors"]) ? $_POST["topicColors"] : 0);
 	$ds_stats_conf['past_online_time'] = (isset($_POST["pastOnlineTime"]) ? $_POST["pastOnlineTime"] : 0);
 	$ds_stats_conf['most_online'] = (isset($_POST["mostOnline"]) ? $_POST["mostOnline"] : 0);
 
-if (isset($ds_stats_conf['show_legend'])) {unset ($ds_stats_conf['show_legend']);}
-if (isset ($_POST["showLegend"]))
-{
-  foreach ($_POST["showLegend"] as $g_id => $legendStatus)	
+  if (isset($ds_stats_conf['show_legend'])) {unset ($ds_stats_conf['show_legend']);}
+  if (isset ($_POST["showLegend"]))
   {
-	  $ds_stats_conf['show_legend'][$g_id] = $legendStatus;
-	}
-} 
-
+    foreach ($_POST["showLegend"] as $g_id => $legendStatus)	
+    {
+      $ds_stats_conf['show_legend'][$g_id] = $legendStatus;
+    }
+  } 
 
   $ds_stats_conf['past_online_enable'] = (isset($_POST["pastOnlineEnable"]) ? $_POST["pastOnlineEnable"] : 0);
 	if (isset($ds_stats_conf['past_online_show'])) {unset ($ds_stats_conf['past_online_show']);}
@@ -99,37 +75,23 @@ if (isset ($_POST["showLegend"]))
     }
   } 
 
-
-	// echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
-
-	//$ds_stats_conf['show_legend'] = (isset($_POST["showLegend"]) ? $_POST["showLegend"] : 0);
-
 	foreach ($_POST["groupColor"] as $g_id => $val) {
 		$ds_stats_conf['group_color'][$g_id] = $val;
 		if (!$val || $val == 'FFFFFF') {unset ($ds_stats_conf['group_color'][$g_id]);}
 	}
-
 
 	$result = $db->query('INSERT INTO '.$db->prefix.'config 
 	(conf_name, conf_value) VALUES (\'o_ds_stats\', \''.preg_replace('~\R~u', "\n", trim(serialize($ds_stats_conf))).'\') 
 	ON DUPLICATE KEY UPDATE conf_value=\''.preg_replace('~\R~u', "\n", trim(serialize($ds_stats_conf))).'\'') or error('Unable to update config', __FILE__, __LINE__, $db->error());
 
 	generate_config_cache();
-
-	 echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
 	redirect('admin_loader.php?plugin=AP_DS_User_Online.php','Settings Saved, Redirecting &hellip;');
-//*/
 	die(); 
 }
-
- 
 
 {
 	// Display the admin navigation menu
 	generate_admin_menu($plugin);
-
-
-
  
 ?>
 	<div class="plugin blockform">
@@ -141,10 +103,6 @@ if (isset ($_POST["showLegend"]))
 		</div>
 <script src="js/jscolor.min.js"></script>
 <?php 
-
-
-//echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
-//echo '<pre>'; var_dump ($pun_config); echo '</pre>';
 
 // Get robots from log
 $result = $db->query('SELECT username FROM '.$db->prefix.'userstats WHERE browser="Robot"  ORDER BY username') or error('Unable to fetch userstats for forum', __FILE__, __LINE__, $db->error());
@@ -244,52 +202,24 @@ while ($row = $result->fetch_assoc()) {
 									<td>
 										<input type="checkbox" name="showLegend[<?php echo $row["g_id"];?>]" id="ourFormId1" title="<?php echo $lang_admin_DS_User_Online['Show Legend for group'];?> <?php echo $row["g_title"];?>" value="1" <?php echo((isset($ds_stats_conf['show_legend'][$row["g_id"]])) ? (($ds_stats_conf['show_legend'][$row["g_id"]] == 1) ? 'checked="checked"' : false ) : false); ?>/> <?php echo $lang_admin_DS_User_Online['Show Legend'];?> 
 									</td>
-									
-									
-									
-									
 								</tr>
-
 <?php
 }
 $result->free();	// free result set
 
 
 ?>
-	
-	
-
-								
+							
 							</table>
 
 						</div>
 
 					</fieldset>
 
-
-
-					<fieldset>
-						<legend><?php echo $lang_admin_DS_User_Online['IP list'] ?></legend>
-						<div class="infldset">
-							<table class="aligntop" cellspacing="0">
-
-
-							</table>
-  					</div>
-					</fieldset>
-
 					<th scope="row"><div><input type="submit" name="save_options" value="<?php echo $lang_admin_DS_User_Online['Save settings'] ?>" tabindex="2" /></div></th>
 
 			</form>
-
-
 <hr>
-
-
-<hr>
-
-
-
 		</div>
 	</div>
 <?php

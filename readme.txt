@@ -6,9 +6,9 @@
 ##     Release date:  2017-07-02
 ##           Author:  DenisVS (deniswebcomm@gmail.com)
 ##
-##      Description:  This mod allows the administrator and moderators to 
-##                    assign a curator of a topic chosen from regular users
-##                    who can manage a particular topic, except users ban.
+##      Description:  
+##                    
+##                    
 ##
 ##
 ##   Affected files:  
@@ -450,4 +450,6 @@ require PUN_ROOT.'footer.php';
 #
 
 }
+
+
 

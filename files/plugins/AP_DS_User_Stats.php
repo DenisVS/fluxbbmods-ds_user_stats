@@ -6,9 +6,7 @@
  * License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
  */
 
-define('PUN_DEBUG', 1);
-define('PUN_SHOW_QUERIES', 1);
-ini_set('display_errors', 1);
+
  
 // Make sure no one attempts to run this script "directly"
 if (!defined('PUN'))
@@ -56,7 +54,6 @@ if (isset($_POST['delete_bots']))
   {
     unset ($ds_stats_conf['bots'][$botName]);
   }
-  //echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
 	$db->query('INSERT INTO '.$db->prefix.'config 
 	(conf_name, conf_value) VALUES (\'o_ds_stats\', \''.serialize($ds_stats_conf).'\') 
 	ON DUPLICATE KEY UPDATE conf_value=\''.serialize($ds_stats_conf).'\'') or error('Unable to update config', __FILE__, __LINE__, $db->error());
@@ -99,22 +96,12 @@ else
 {
 	unset ($ds_stats_conf['IP']);
 }
-	/*/
-	$ips = (isset($_POST["IP"]) ? $_POST["IP"] : false);
-	$ips =   str_replace  ("\r", "\n", trim ($ips));
-	$ips =   str_replace  ("\n", ' ', trim ($ips));
-	$ips = preg_replace("/\s+/", " ", $ips);
-	$ips =   explode(' ', trim ($ips));
-	unset ($ds_stats_conf['IP']);
-	foreach ($ips as $ip)	{$ds_stats_conf['IP'][$ip] = true;}
-	*/
+
 
 if (isset ($ds_stats_conf["bots"]))
 {
   foreach ($ds_stats_conf["bots"] as $botName => $botStatus)	{$ds_stats_conf["bots"][$botName] = (isset($_POST["botName"][$botName])) ? 1 : 0;}
 } 
-//  (isset ($ds_stats_conf["bots"]) ? foreach ($ds_stats_conf["bots"] as $botName => $botStatus)	{$ds_stats_conf["bots"][$botName] = (isset($_POST["botName"][$botName])) ? 1 : 0;}:0);
- //(isset($ds_stats_conf["bots"]) foreach ($ds_stats_conf["bots"] as $botName => $botStatus)	{$ds_stats_conf["bots"][$botName] = (isset($_POST["botName"][$botName])) ? 1 : 0;}  : 0);
 
 	$result = $db->query('INSERT INTO '.$db->prefix.'config 
 	(conf_name, conf_value) VALUES (\'o_ds_stats\', \''.preg_replace('~\R~u', "\n", trim(serialize($ds_stats_conf))).'\') 
@@ -123,10 +110,8 @@ if (isset ($ds_stats_conf["bots"]))
 if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
     require PUN_ROOT.'include/cache.php';
  
-// Regenerate the config cache
-generate_config_cache();
-
-	 echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
+  // Regenerate the config cache
+  generate_config_cache();
 	redirect('admin_loader.php?plugin=AP_DS_User_Stats.php','Settings Saved, Redirecting &hellip;');
 	die();
 }
@@ -152,8 +137,6 @@ generate_config_cache();
 $result = $db->query('SELECT * FROM '.$db->prefix.'config WHERE conf_name=\'o_ds_stats\'' );
 $data = $db->fetch_assoc($result);
 $ds_stats_conf = unserialize($data['conf_value']);
-//echo '<pre>'; var_dump ($ds_stats_conf); echo '</pre>';
-//echo '<pre>'; var_dump ($pun_config); echo '</pre>';
 
 // Get robots from log
 $result = $db->query('SELECT username FROM '.$db->prefix.'userstats WHERE browser="Robot"  ORDER BY username') or error('Unable to fetch userstats for forum', __FILE__, __LINE__, $db->error());
