@@ -1,10 +1,6 @@
 <?php
 //$Id$
-//define('PUN_DEBUG', 1);
-define('PUN_SHOW_QUERIES', 1);
-ini_set('display_errors', 1);
-ini_set('error_reporting', E_ALL);
-ini_set("display_startup_errors","1");
+
 define('PUN_ROOT', './');
 require PUN_ROOT.'include/common.php';
 $ds_stats_conf = unserialize($pun_config['o_ds_stats']);
@@ -155,6 +151,5 @@ if($db->num_rows($result))
 	</div>
 </div>
 <?php
-echo '<pre>'; var_dump( $ds_stats_conf); echo '</pre>';
 require PUN_ROOT.'footer.php';
 ?>
