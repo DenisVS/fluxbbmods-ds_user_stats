@@ -72,3 +72,49 @@ function generate_ds_stats_legend_cache()
 	fluxbb_write_cache_file('cache_ds_stats_legend.php', $content);
 }
 
+
+//
+// Generate the stats past online cache PHP script
+//
+function generate_ds_stats_past_cache($period_check, $period_unit, $between_queries, $num_entries_count_bak)
+{
+	global $db;
+		$result = $db->query('SELECT MIN(date) AS mindate FROM '.$db->prefix.'userstats') or error('Unable to fetch minimum date from userstats table', __FILE__, __LINE__, $db->error());
+		$period_min = $db->fetch_assoc($result);
+		$period_min = $period_min['mindate'];
+		$period_range = time() - $period_min;
+		if ($period_check < $period_min)
+		{
+			// set up new period - using min value as base
+			if ($period_unit == "h")
+			{
+				if (((time()-$period_min)/60) < 60)
+				{
+					// must use minutes instead of hours
+					$period = ceil((time()-$period_min)/60);
+					$period_check = time() - $period*60;
+				}
+				else
+				{
+					// can use hours
+					$period = ceil((time()-$period_min)/60/60);
+					$period_check = time() - $period*60*60;
+				}
+			}
+			else
+			{
+				// use minutes
+				$period = ceil((time()-$period_min)/60);
+				$period_check = time() - $period*60;
+			}
+		}
+		$result2 = $db->query('SELECT DISTINCT u.username, u.userid, u.userip, r.group_id FROM '.$db->prefix.'userstats AS u LEFT JOIN '.$db->prefix.'users as r ON u.userid = r.id WHERE u.date >='.$period_check.' AND u.browser <> \'Robot\' ORDER BY u.userip') or error('Unable to fetch user stats', __FILE__, __LINE__, $db->error());
+		$num_entries_count = $db->num_rows($result2);	// Count entries
+		while ($pun_user_online = $db->fetch_assoc($result2))
+    $users_past_online[] = $pun_user_online;
+
+	// Output list past online as PHP code
+	$content = '<?php'."\n\n".'define(\'PAST_ONLINE_LOADED\', 1);'."\n\n".'$users_past_online = '.var_export($users_past_online, true).';'."\n\n".'$period_min = '.var_export($period_min, true).';'."\n".'$num_entries_count = '.var_export($num_entries_count, true).";\n".'$between_queries = '.var_export($between_queries, true).";\n".'$num_entries_count_bak = '.var_export($num_entries_count_bak, true).";\n".'$past_timestamp = '.var_export(time(), true).";\n\n".'?>';
+	fluxbb_write_cache_file('cache_ds_stats_past.php', $content);
+}
+

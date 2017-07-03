@@ -133,10 +133,25 @@ if ($pun_config['o_users_online'] == '1')
 			$period_string = ($period == "1") ? $lang_usersonline['Online past minute single'] : str_replace('<NUM>', $period, $lang_usersonline['Online past minutes plural']);
 		}
 
+    // Caching of past online
+    if (file_exists(FORUM_CACHE_DIR.'cache_ds_stats_past.php'))
+    {
+        include FORUM_CACHE_DIR.'cache_ds_stats_past.php';
+    }
+    else  
+    {
+        generate_ds_stats_past_cache($period_check, $period_unit, 120);
+        include FORUM_CACHE_DIR.'cache_ds_stats_past.php';
+    }
+// Caching end
+
 		// Fetch minimum date in userstats table
-		$result = $db->query('SELECT MIN(date) AS mindate FROM '.$db->prefix.'userstats') or error('Unable to fetch minimum date from userstats table', __FILE__, __LINE__, $db->error());
-		$period_min = $db->fetch_assoc($result);
-		$period_min = $period_min['mindate'];
+		//$result = $db->query('SELECT MIN(date) AS mindate FROM '.$db->prefix.'userstats') or error('Unable to fetch minimum date from userstats table', __FILE__, __LINE__, $db->error());
+		//$period_min = $db->fetch_assoc($result);
+		
+		
+		
+		//$period_min = $period_min['mindate'];
 		$period_range = time() - $period_min;
 		if ($period_check < $period_min)
 		{
@@ -149,7 +164,7 @@ if ($pun_config['o_users_online'] == '1')
 					// must use minutes instead of hours
 					$period = ceil((time()-$period_min)/60);
 					$period_unit = "m";
-					$period_check = time() - $period*60;
+					//$period_check = time() - $period*60;
 					$period_string = ($period == "1") ? $lang_usersonline['Online past minute single'] : str_replace('<NUM>', $period, $lang_usersonline['Online past minutes plural']);
 				}
 				
@@ -158,7 +173,7 @@ if ($pun_config['o_users_online'] == '1')
 					// can use hours
 					$period = ceil((time()-$period_min)/60/60);
 					$period_unit = "h";
-					$period_check = time() - $period*60*60;
+					//$period_check = time() - $period*60*60;
 					$period_string = ($period == "1") ? $lang_usersonline['Online past hour single'] : str_replace('<NUM>', $period, $lang_usersonline['Online past hours plural']);
 				}
 			}
@@ -167,19 +182,43 @@ if ($pun_config['o_users_online'] == '1')
 				// use minutes
 				$period = ceil((time()-$period_min)/60);
 				$period_unit = "m";
-				$period_check = time() - $period*60;
+				//$period_check = time() - $period*60;
 				$period_string = ($period == "1") ? $lang_usersonline['Online past minute single'] : str_replace('<NUM>', $period, $lang_usersonline['Online past minutes plural']);
 			}
 		}
-		$result2 = $db->query('SELECT DISTINCT u.username, u.userid, u.userip, r.group_id FROM '.$db->prefix.'userstats AS u LEFT JOIN '.$db->prefix.'users as r ON u.userid = r.id WHERE u.date >='.$period_check.' AND u.browser <> \'Robot\' ORDER BY u.userip') or error('Unable to fetch user stats', __FILE__, __LINE__, $db->error());
+		//$result2 = $db->query('SELECT DISTINCT u.username, u.userid, u.userip, r.group_id FROM '.$db->prefix.'userstats AS u LEFT JOIN '.$db->prefix.'users as r ON u.userid = r.id WHERE u.date >='.$period_check.' AND u.browser <> \'Robot\' ORDER BY u.userip') or error('Unable to fetch user stats', __FILE__, __LINE__, $db->error());
 		$jj_userip_pre = $jj_userid_pre = "nantsoke"; // Just some random text for initialization
 		$jj_userids = array(); // Initialize array
 		$count_guest = $count_user = $deleteby = $count_row = $countj = 0;
 		$first_occur = 1;
-		$num_entries_count = $db->num_rows($result2);	// Count entries
+		//$num_entries_count = $db->num_rows($result2);	// Count entries
 
-		while ($pun_user_online = $db->fetch_assoc($result2))
+if (time() > ($past_timestamp + $between_queries))
+{
+  
+  if (!isset ($between_queries) || $between_queries == 0)
+    $between_queries = 120;
+
+  if  (abs(($num_entries_count + $num_entries_count_bak) / 2 - $num_entries_count) > 1)
+  {
+    $between_queries = intval($between_queries / 2);
+  }
+  else if (abs(($num_entries_count + $num_entries_count_bak) / 2 - $num_entries_count) < 1) 
+  {
+    $between_queries = intval($between_queries * 1.2 + 1);
+  }
+  else
+    $between_queries = intval($between_queries * 1.1 + 0.9);
+ 
+  generate_ds_stats_past_cache($period_check, $period_unit, $between_queries, $num_entries_count);
+}
+//if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>$users_past_online: '; var_dump ($users_past_online); echo '</pre>';
+
+foreach ($users_past_online as $pun_user_online)
+		//while ($pun_user_online = $db->fetch_assoc($result2))
 		{
+		//if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>$pun_user_online: '; var_dump ($pun_user_online); echo '</pre>';
+
 			++$count_row;
 			$jj_userid = $pun_user_online['userid'];
 			$jj_userip = $pun_user_online['userip'];
