@@ -1,36 +1,116 @@
+##
+##        Mod title:  DS Stats
+##
+##      Mod version:  1.0
+##  Works on FluxBB:  1.5.10
+##     Release date:  2017-07-02
+##           Author:  DenisVS (deniswebcomm@gmail.com)
+##
+##      Description:  This mod allows the administrator and moderators to 
+##                    assign a curator of a topic chosen from regular users
+##                    who can manage a particular topic, except users ban.
+##
+##
+##   Affected files:  
+##                    
+##                    footer.php
+##                    viewtopic.php
+##                    
+##
+##       Affects DB:  Yes
+##
+##            Notes:  This is just a template. Don't try to install it! Rows
+##                    in this header should be no longer than 78 characters
+##                    wide. Edit this file and save it as readme.txt. Include
+##                    the file in the archive of your mod. The mod disclaimer
+##                    below this paragraph must be left intact. This space
+##                    would otherwise be a good space to brag about your mad
+##                    modding skills :)
+##
+##       DISCLAIMER:  Please note that "mods" are not officially supported by
+##                    FluxBB. Installation of this modification is done at 
+##                    your own risk. Backup your forum database and any and
+##                    all applicable files before proceeding.
+##
+##
+
+#
+#---------[ 1. UPLOAD ]-------------------------------------------------------
+#
+
+
+
+#
+#---------[ 2. RUN ]----------------------------------------------------------
+#
+
+install_mod.php
+
+
+#
+#---------[ 3. DELETE ]-------------------------------------------------------
+#
+
+install_mod.php
+
+
+#
+#---------[ . OPEN ]---------------------------------------------------------
+#
+#
+#---------[ . FIND (line: ) ]---------------------------------------------
+#
+#
+#---------[ . REPLACE WITH ]-------------------------------------------------
+#
+#
+#---------[ . AFTER, ADD ]---------------------------------------------------
+#
+
+##############################################################################
+
+#
+#---------[ . OPEN ]---------------------------------------------------------
+#
+
 admin_groups.php
 
-FIND
+#
+#---------[ . FIND (line: ) ]---------------------------------------------
+#
 
 if ($pun_user['g_id'] != PUN_ADMIN)
 	message($lang_common['No permission']);
 
-ADD,AFTER
+#
+#---------[ . AFTER, ADD ]---------------------------------------------------
+#
 
 if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
     require PUN_ROOT.'include/cache.php';
 
-FIND
+#
+#---------[ . FIND (line: ) ]---------------------------------------------
+#
 
 generate_admin_menu('groups');
 
-ADD,AFTER EACH ENTRY!
+#
+#---------[ . AFTER, ADD FOR EACH ENTRY! ]---------------------------------------------------
+#
 
 generate_ds_stats_legend_cache();
 
-
-
-
-
-
-
+#
+#---------[ . OPEN ]---------------------------------------------------------
+#
 
 include/cache.php
 
-
-# ADD AT THE END
-
-
+#
+#---------[ . ADD AT THE END OF FILE ]---------------------------------------------------
+#
+ 
 //
 // Generate the stats today cache PHP script
 //
@@ -67,8 +147,6 @@ if ($new_user != false)
 	$content = '<?php'."\n\n".'define(\'ATTENDED_TODAY_LOADED\', 1);'."\n\n".'$attended_ids = '.var_export($attended_ids, true).';'."\n\n".'$attended_today = '.var_export($attended_today, true).';'."\n\n".'?>';
 	fluxbb_write_cache_file('cache_ds_stats_today.php', $content);
 }
-
-
 
 //
 // Generate the stats legend PHP script
