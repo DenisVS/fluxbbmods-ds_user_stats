@@ -54,7 +54,7 @@ function install()
 					opsys VARCHAR(200) NOT NULL DEFAULT '',
 					country VARCHAR(200) NOT NULL DEFAULT '',
 					PRIMARY KEY (id)
-					) TYPE=MyISAM;";
+					)";
 			break;
 		
 		case 'mysqli_innodb':
@@ -97,6 +97,7 @@ function install()
 	
 	
 	$db->query($sql) or error('Unable to create table '.$db->prefix.'userstats.', __FILE__, __LINE__, $db->error());
+		$db->query('ALTER TABLE '.$db->prefix.'online ADD COLUMN `currently` text') or error('Unable to add column currently into table '.$db->prefix.'online.',  __FILE__, __LINE__, $db->error());
 
 	if ($db_type == 'pgsql' || $db_type == 'sqlite')
 		$db->end_transaction();
@@ -111,6 +112,7 @@ function restore()
 		$db->start_transaction();
 
 	$db->query('DROP TABLE '.$db->prefix.'userstats') or error('Unable to remove table '.$db->prefix.'userstats.', __FILE__, __LINE__, $db->error());
+		$db->query('ALTER TABLE '.$db->prefix.'online DROP COLUMN `currently`') or error('Unable to drop column currently in table '.$db->prefix.'online.',  __FILE__, __LINE__, $db->error());
 
 	if ($db_type == 'pgsql' || $db_type == 'sqlite')
 		$db->end_transaction();
