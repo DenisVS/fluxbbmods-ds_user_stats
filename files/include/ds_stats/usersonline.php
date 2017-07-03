@@ -205,7 +205,7 @@ if (time() > ($past_timestamp + $between_queries))
   }
   else if (abs(($num_entries_count + $num_entries_count_bak) / 2 - $num_entries_count) < 1) 
   {
-    $between_queries = intval($between_queries * 1.2 + 1);
+    $between_queries = intval($between_queries * 1.5 + 1);
   }
   else
     $between_queries = intval($between_queries * 1.1 + 0.9);
