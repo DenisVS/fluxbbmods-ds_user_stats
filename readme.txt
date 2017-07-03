@@ -397,8 +397,6 @@ $ds_stats_conf = unserialize($pun_config['o_ds_stats']);
 #---------[ . FIND (line: ) ]---------------------------------------------
 #
 
-define('PUN_ALLOW_INDEX', 1);
-define('PUN_ACTIVE_PAGE', 'index');
 require PUN_ROOT.'header.php';
 
 #
@@ -412,20 +410,13 @@ require PUN_ROOT.'include/ds_stats/userstats_track.php'; // Load userstats track
 #---------[ . FIND (line: ) ]---------------------------------------------
 #
 
-#Здесь разобраться, формирование username
-$username
+			$username = '<a href="profile.php?id='.$cur_post['poster_id'].'">'.pun_htmlspecialchars($cur_post['username']).'</a>';
 
 #
 #---------[ . REPLACE WITH ]-------------------------------------------------
 #
 
-		// USERSONLINE MOD: Apply group color to current poster
-		$username =$cur_post['gender'].' <a '.((isset($ds_stats_conf['group_color'][$cur_post['g_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$cur_post['g_id']].'" ' : '').'href="profile.php?id='.$cur_post['poster_id'].'">'.pun_htmlspecialchars($cur_post['username']).'</a> ';
-
-
-
-Вроде всё, но надо проверить
-
+$username = '<a '.((isset($ds_stats_conf['group_color'][$cur_post['g_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$cur_post['g_id']].'" ' : '').'href="profile.php?id='.$cur_post['poster_id'].'">'.pun_htmlspecialchars($cur_post['username']).'</a>';
 
 #
 #---------[ . OPEN ]---------------------------------------------------------
@@ -437,8 +428,6 @@ index.php
 #---------[ . FIND (line: ) ]---------------------------------------------
 #
 
-define('PUN_ALLOW_INDEX', 1);
-define('PUN_ACTIVE_PAGE', 'index');
 require PUN_ROOT.'header.php';
 
 #
