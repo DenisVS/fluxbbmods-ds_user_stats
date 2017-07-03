@@ -353,7 +353,8 @@ foreach ($users_past_online as $pun_user_online)
       {
           if (!isset($attended_ids[$current_user_online['user_id']])) 
           {
-              generate_ds_stats_today_cache($todaystamp, $all_users_online, $attended_ids[$current_user_online['user_id']]);
+              if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>'; var_dump ($current_user_online); echo '</pre>';
+              generate_ds_stats_today_cache($todaystamp, $all_users_online, $current_user_online);
               include FORUM_CACHE_DIR.'cache_ds_stats_today.php';
           }
       }

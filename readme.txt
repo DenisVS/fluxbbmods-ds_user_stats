@@ -34,7 +34,7 @@ include/cache.php
 //
 // Generate the stats today cache PHP script
 //
-function generate_ds_stats_today_cache($todaystamp, $online_list, $new_user_id = false)
+function generate_ds_stats_today_cache($todaystamp, $online_list, $new_user = false)
 {
 	global $db;
 
@@ -44,6 +44,16 @@ function generate_ds_stats_today_cache($todaystamp, $online_list, $new_user_id =
 	while ($today = $db->fetch_assoc($result))
 		$attended_today[] = $today; // Get users today
 
+// to avoid refreshing until new user off
+if ($new_user != false) 
+{
+    $current['id']  = $new_user['user_id'];
+    $current["username"] = $new_user["ident"];
+    $current["group_id"] = $new_user["group_id"];
+    $current["last_visit"] = time();
+    $attended_today[] =  $current;
+}
+
   // flipp array - get users tuday. Keys is ID.
   foreach ($attended_today  as $current_user_today) 
   {
@@ -52,11 +62,12 @@ function generate_ds_stats_today_cache($todaystamp, $online_list, $new_user_id =
       $attended_ids[$current_user_today['id']] = true;
     }
   }
-  if ($new_user_id != false) $attended_ids[$new_user_id] = true; // to avoid refreshing until new user off
+  //if ($new_user_id != false) $attended_ids[$new_user_id] = true; // to avoid refreshing until new user off
 	// Output list as PHP code
 	$content = '<?php'."\n\n".'define(\'ATTENDED_TODAY_LOADED\', 1);'."\n\n".'$attended_ids = '.var_export($attended_ids, true).';'."\n\n".'$attended_today = '.var_export($attended_today, true).';'."\n\n".'?>';
 	fluxbb_write_cache_file('cache_ds_stats_today.php', $content);
 }
+
 
 
 //
