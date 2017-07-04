@@ -361,7 +361,8 @@ foreach ($users_past_online as $pun_user_online)
 		{
 			if (!isset($attended_ids[$current_user_online['user_id']])) 
 			{
-				if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>'; var_dump ($current_user_online); echo '</pre>';
+				//if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>'; var_dump ($current_user_online); echo '</pre>';
+				array_map('unlink', glob(FORUM_CACHE_DIR."cache_ds_stats_today_*.php"));
 				generate_ds_stats_today_cache($todaystamp, $all_users_online, $current_user_online, $localUsersWeekDay, $diff_user_time);
 				include FORUM_CACHE_DIR.'cache_ds_stats_today_' . $diff_user_time . '.php';
 			}
