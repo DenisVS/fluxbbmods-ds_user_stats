@@ -29,7 +29,6 @@ if ($pun_config['o_users_online'] == '1')
     $localUsersDate = new DateTime();
 	$localUsersDate->setTimestamp(time()+$diff_user_time); 
 	$localUsersWeekDay = $localUsersDate->format('w'); // Local user's weekday.
-	echo $localUsersWeekDay;
 	
 	// Fetch users online info and generate strings for output
 	$num_guests = $num_bots = 0;
