@@ -23,6 +23,9 @@ if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
 <?php
 if ($pun_config['o_users_online'] == '1')
 {
+	// Adjust the date
+    $diff_user_time = ($pun_user['timezone'] - $pun_config['o_default_timezone']) * 3600 ;
+	
 	// Fetch users online info and generate strings for output
 	$num_guests = $num_bots = 0;
 	$users = array();
@@ -91,9 +94,10 @@ if ($pun_config['o_users_online'] == '1')
 
 		generate_config_cache();	// Regenerate the config cache
 	}
-    // Adjust the date
-    $diff = ($pun_user['timezone'] - $pun_config['o_default_timezone']) * 3600 ;
-	$ds_stats_conf['max_date'] += $diff;
+	
+    // Adjust the date ПРобуем перенести вначало
+    //$diff_user_time = ($pun_user['timezone'] - $pun_config['o_default_timezone']) * 3600 ;
+	$ds_stats_conf['max_date'] += $diff_user_time;
 
 	if ($ds_stats_conf['most_online'])
 	{
@@ -334,7 +338,7 @@ foreach ($users_past_online as $pun_user_online)
 	// users online today 
 		if (isset($ds_stats_conf['today_show'][$pun_user['group_id']]) && $ds_stats_conf['today_show'][$pun_user['group_id']] == 1)
 	{
-	$date = getdate(time() + $diff);
+	$date = getdate(time() + $diff_user_time);
 	$todaystamp = mktime(0, 0, 0, $date['mon'], $date['mday'], $date['year']);
 	
   // Caching of online today
