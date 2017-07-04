@@ -106,11 +106,12 @@ include/cache.php
 #
 #---------[ . ADD AT THE END OF FILE ]---------------------------------------------------
 #
- 
+
+
 //
 // Generate the stats today cache PHP script
 //
-function generate_ds_stats_today_cache($todaystamp, $online_list, $new_user = false)
+function generate_ds_stats_today_cache($todaystamp, $online_list, $new_user, $localUsersWeekDay, $diff_user_time)
 {
 	global $db;
 
@@ -140,8 +141,8 @@ if ($new_user != false)
   }
   //if ($new_user_id != false) $attended_ids[$new_user_id] = true; // to avoid refreshing until new user off
 	// Output list as PHP code
-	$content = '<?php'."\n\n".'define(\'ATTENDED_TODAY_LOADED\', 1);'."\n\n".'$attended_ids = '.var_export($attended_ids, true).';'."\n\n".'$attended_today = '.var_export($attended_today, true).';'."\n\n".'?>';
-	fluxbb_write_cache_file('cache_ds_stats_today.php', $content);
+	$content = '<?php'."\n\n".'define(\'ATTENDED_TODAY_LOADED\', 1);'."\n\n".'$attended_ids = '.var_export($attended_ids, true).';'."\n\n".'$attended_today = '.var_export($attended_today, true).';'."\n\n".'$previousWeekDay = '.$localUsersWeekDay.';'."\n\n".'?>';
+	fluxbb_write_cache_file('cache_ds_stats_today_' . $diff_user_time . '.php', $content);
 }
 
 //

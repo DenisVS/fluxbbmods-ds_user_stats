@@ -25,6 +25,11 @@ if ($pun_config['o_users_online'] == '1')
 {
 	// Adjust the date
     $diff_user_time = ($pun_user['timezone'] - $pun_config['o_default_timezone']) * 3600 ;
+    
+    $localUsersDate = new DateTime();
+	$localUsersDate->setTimestamp(time()+$diff_user_time); 
+	$localUsersWeekDay = $localUsersDate->format('w'); // Local user's weekday.
+	echo $localUsersWeekDay;
 	
 	// Fetch users online info and generate strings for output
 	$num_guests = $num_bots = 0;
@@ -335,35 +340,35 @@ foreach ($users_past_online as $pun_user_online)
 			echo "\t\t\t".'<dl id="pastonline" class= "clearb">'."\n\t\t\t\t".'<dt style="DISPLAY: inline; HEIGHT: 0"><strong>'.$period_string.':&nbsp;['.$num_guests_ot.'&nbsp;'.$guests_ot_dsp.', '.$num_users_ot.'&nbsp;'.$users_ot_dsp.']</strong></dt>'."\n\t\t\t".'</dl>'."\n";
 		}
 	}
-	// users online today 
+	//########### USERS ONLINE TODAY 
 		if (isset($ds_stats_conf['today_show'][$pun_user['group_id']]) && $ds_stats_conf['today_show'][$pun_user['group_id']] == 1)
 	{
-	$date = getdate(time() + $diff_user_time);
-	$todaystamp = mktime(0, 0, 0, $date['mon'], $date['mday'], $date['year']);
-	
-  // Caching of online today
-  if (file_exists(FORUM_CACHE_DIR.'cache_ds_stats_today.php'))
-  {
-      include FORUM_CACHE_DIR.'cache_ds_stats_today.php';
-  }
-  else  
-  {
-      generate_ds_stats_today_cache($todaystamp, $all_users_online, false);
-      include FORUM_CACHE_DIR.'cache_ds_stats_today.php';
-  }
-  foreach ($all_users_online  as $current_user_online) 
-  {
-      if ($current_user_online["user_id"] != 1) 
-      {
-          if (!isset($attended_ids[$current_user_online['user_id']])) 
-          {
-              if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>'; var_dump ($current_user_online); echo '</pre>';
-              generate_ds_stats_today_cache($todaystamp, $all_users_online, $current_user_online);
-              include FORUM_CACHE_DIR.'cache_ds_stats_today.php';
-          }
-      }
-  }
-  // Caching end
+		$date = getdate(time() + $diff_user_time);
+		$todaystamp = mktime(0, 0, 0, $date['mon'], $date['mday'], $date['year']);
+	// Caching of online today
+	if (file_exists(FORUM_CACHE_DIR.'cache_ds_stats_today_' . $diff_user_time . '.php'))
+	{
+		include FORUM_CACHE_DIR.'cache_ds_stats_today_' . $diff_user_time . '.php';
+	}
+	else  
+	{
+		  generate_ds_stats_today_cache($todaystamp, $all_users_online, false, $localUsersWeekDay, $diff_user_time);
+		  include FORUM_CACHE_DIR.'cache_ds_stats_today_' . $diff_user_time . '.php';
+	}
+	if ($localUsersWeekDay != $previousWeekDay) generate_ds_stats_today_cache($todaystamp, $all_users_online, false, $localUsersWeekDay, $diff_user_time);
+	foreach ($all_users_online  as $current_user_online) 
+	{
+		if ($current_user_online["user_id"] != 1) 
+		{
+			if (!isset($attended_ids[$current_user_online['user_id']])) 
+			{
+				if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>'; var_dump ($current_user_online); echo '</pre>';
+				generate_ds_stats_today_cache($todaystamp, $all_users_online, $current_user_online, $localUsersWeekDay, $diff_user_time);
+				include FORUM_CACHE_DIR.'cache_ds_stats_today_' . $diff_user_time . '.php';
+			}
+		}
+	}
+	// Caching end
 
 	$users_today = array();
 	foreach ($attended_today as $user_online_today)
@@ -375,9 +380,10 @@ foreach ($users_past_online as $pun_user_online)
 	}
 	if (count($users_today) > 0) 
 		echo "\t\t\t".'<dl id="onlinelist" class="clearb">'."\n\t\t\t\t".'<dt>'.$lang_usersonline['Online today'].': </dt>'.implode(',</dd> ', $users_today).'</dd>'."\n\t\t\t".'</dl>'."\n";
-}
+	}
+	//########### USERS ONLINE TODAY END
 
-if (isset($ds_stats_conf['show_legend'][$pun_user['group_id']]) && $ds_stats_conf['show_legend'][$pun_user['group_id']] == 1)
+	if (isset($ds_stats_conf['show_legend'][$pun_user['group_id']]) && $ds_stats_conf['show_legend'][$pun_user['group_id']] == 1)
 	{
 	
     // Caching of legend
