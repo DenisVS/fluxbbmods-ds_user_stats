@@ -15,7 +15,12 @@ if (!defined('PUN'))
 $ds_stats_conf = unserialize($pun_config['o_ds_stats']);
  
 // Load the admin_plugin_example.php language file
-require PUN_ROOT.'lang/'.$admin_language.'/admin_DS_User_Stats.php';
+if (file_exists(PUN_ROOT.'lang/'.$admin_language.'/admin_DS_User_Stats.php'))
+        require PUN_ROOT.'lang/'.$admin_language.'/admin_DS_User_Stats.php';
+else
+        require PUN_ROOT.'admin_DS_User_Stats.php';
+
+
  
 // Tell admin_loader.php that this is indeed a plugin and that it is loaded
 define('PUN_PLUGIN_LOADED', 1);
