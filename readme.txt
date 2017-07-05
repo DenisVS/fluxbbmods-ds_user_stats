@@ -38,6 +38,7 @@
 Users Current Position Online
 Mod version:  1.7
 *Исключть шаги:
+2
 12
 13
 14
@@ -91,9 +92,12 @@ if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
 
 generate_admin_menu('groups');
 
+
+NOTE: There should be four occurrences of this in the code of admin_groups.php. The next step applies to all of them.
 #
 #---------[ . AFTER, ADD FOR EACH ENTRY(4 TIMES)! ]---------------------------
 #
+
 
 generate_ds_stats_legend_cache();
 
