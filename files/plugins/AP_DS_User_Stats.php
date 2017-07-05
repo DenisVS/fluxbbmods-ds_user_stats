@@ -13,12 +13,12 @@ if (!defined('PUN'))
 	exit;
 
 $ds_stats_conf = unserialize($pun_config['o_ds_stats']);
- 
+
 // Load the admin_plugin_example.php language file
 if (file_exists(PUN_ROOT.'lang/'.$admin_language.'/admin_DS_User_Stats.php'))
         require PUN_ROOT.'lang/'.$admin_language.'/admin_DS_User_Stats.php';
 else
-        require PUN_ROOT.'admin_DS_User_Stats.php';
+        require PUN_ROOT.'lang/English/admin_DS_User_Stats.php';
 
 
  
