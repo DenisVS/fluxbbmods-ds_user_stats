@@ -76,7 +76,7 @@ admin_groups.php
 #
 
 if ($pun_user['g_id'] != PUN_ADMIN)
-	message($lang_common['No permission']);
+	message($lang_common['No permission'], false, '403 Forbidden');
 
 #
 #---------[ . AFTER, ADD ]---------------------------------------------------
