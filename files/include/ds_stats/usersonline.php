@@ -233,14 +233,14 @@ if (time() > ($past_timestamp + $ttl_past_cache))
 }
 //if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>$users_past_online: '; var_dump ($users_past_online); echo '</pre>';
 
-foreach ($users_past_online as $pun_user_online)
-		//while ($pun_user_online = $db->fetch_assoc($result2))
+foreach ($users_past_online as $current_past_online)
+		//while ($current_past_online = $db->fetch_assoc($result2))
 		{
-		//if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>$pun_user_online: '; var_dump ($pun_user_online); echo '</pre>';
+		//if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>$current_past_online: '; var_dump ($current_past_online); echo '</pre>';
 
 			++$count_row;
-			$jj_userid = $pun_user_online['userid'];
-			$jj_userip = $pun_user_online['userip'];
+			$jj_userid = $current_past_online['userid'];
+			$jj_userip = $current_past_online['userip'];
 			if ($jj_userip == $jj_userip_pre)
 			{
 				// For the first occurrence
@@ -293,8 +293,8 @@ foreach ($users_past_online as $pun_user_online)
 				{
 					$jj_userids[] = $jj_userid;
 					$countj = $countj + 1;
-					$users_ot[$countj]["username"] = $pun_user_online['username'];
-					$users_ot[$countj]["link"] = "\n\t\t\t\t".'<dd style="DISPLAY: inline; HEIGHT: 0"><a '.((isset($ds_stats_conf['group_color'][$pun_user_online['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$pun_user_online['group_id']].'" ' : '').'href="profile.php?id='.$pun_user_online['userid'].'">'.pun_htmlspecialchars($pun_user_online['username']).'</a>';
+					$users_ot[$countj]["username"] = $current_past_online['username'];
+					$users_ot[$countj]["link"] = "\n\t\t\t\t".'<dd style="DISPLAY: inline; HEIGHT: 0"><a '.((isset($ds_stats_conf['group_color'][$current_past_online['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$current_past_online['group_id']].'" ' : '').'href="profile.php?id='.$current_past_online['userid'].'">'.pun_htmlspecialchars($current_past_online['username']).'</a>';
 				}
 			}
 			$jj_userid_pre = $jj_userid;
