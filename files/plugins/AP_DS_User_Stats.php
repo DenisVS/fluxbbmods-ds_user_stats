@@ -27,7 +27,7 @@ define('PUN_PLUGIN_LOADED', 1);
 
 
 // Add bots
-if (isset($_POST['add_bots']))
+if (isset($_POST['add_bots']) && isset($_POST['newBots']))
 {
   foreach ($_POST['newBots']  as $botNUM => $botName)  
   {

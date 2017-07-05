@@ -17,8 +17,6 @@ if (file_exists(PUN_ROOT.'lang/'.$pun_user['language'].'/ds_stats.php'))
 else
 	require PUN_ROOT.'lang/English/ds_stats.php';
 
-if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
-    require PUN_ROOT.'include/cache.php';
 ?>
 <div id="brdstats" class="block">
 	<h2><span><?php echo $lang_index['Board info'] ?></span></h2>
@@ -86,7 +84,14 @@ if ($pun_config['o_users_online'] == '1')
 		echo "\t\t\t".'<dl id="onlinelist" class= "clearb">'."\n\t\t\t\t".'<dt><strong>'.$online_label.'</strong>&nbsp;'.($num_guests+$num_users+$num_bots).'&nbsp;['.$num_bots.'&nbsp;'.$bots_dsp.', '.$num_guests.'&nbsp;'.$guests_dsp.', '.$num_users.'&nbsp;'.$users_dsp.']</dt>'."\n\t\t\t".'</dl>'."\n";
 	}
 
+
+require PUN_ROOT.'include/ds_stats/cache.php';
+
 //########### MOST ONLINE START
+	if ($ds_stats_conf['most_online'])
+	{
+
+
 	$rnum_guests = $rnum_users = $rnum_bots = 0;
 	foreach ($all_users_online as $user_id => $value)
 	{
@@ -114,8 +119,7 @@ if ($pun_config['o_users_online'] == '1')
     //$diff_user_time = ($pun_user['timezone'] - $pun_config['o_default_timezone']) * 3600 ;
 	$ds_stats_conf['max_date'] += $diff_user_time;
 
-	if ($ds_stats_conf['most_online'])
-	{
+
 	?>
 			<dl id="mostonline" class= "clearb">
 				<dt style="DISPLAY: inline; HEIGHT: 0"><?php echo $lang_usersonline['Most online'] ?>:&nbsp;<?php echo $ds_stats_conf['max_users'] ?> (<?php echo date("D M j, Y g:i a",$ds_stats_conf['max_date']) ?>)</dt>				
@@ -159,7 +163,7 @@ if ($pun_config['o_users_online'] == '1')
     }
     else  
     {
-        generate_ds_stats_past_cache($period_check, $period_unit, 120);
+        generate_ds_stats_past_cache($period_check, $period_unit, 600);
         include FORUM_CACHE_DIR.'cache_ds_stats_past.php';
     }
 // Caching end
@@ -214,30 +218,14 @@ if ($pun_config['o_users_online'] == '1')
 
 if (time() > ($past_timestamp + $ttl_past_cache))
 {
-  
-  if (!isset ($ttl_past_cache) || $ttl_past_cache == 0)
-    $ttl_past_cache = 120;
-
-  if  (abs(($num_entries_count + $num_entries_count_bak) / 2 - $num_entries_count) > 1)
-  {
-    $ttl_past_cache = intval($ttl_past_cache / 2);
-  }
-  else if (abs(($num_entries_count + $num_entries_count_bak) / 2 - $num_entries_count) < 1) 
-  {
-    $ttl_past_cache = intval($ttl_past_cache * 1.5 + 1);
-  }
-  else
-    $ttl_past_cache = intval($ttl_past_cache * 1.1 + 0.9);
- 
-  generate_ds_stats_past_cache($period_check, $period_unit, $ttl_past_cache, $num_entries_count);
+	$ttl_past_cache = 600;
+  generate_ds_stats_past_cache($period_check, $period_unit, $ttl_past_cache);
 }
-//if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>$users_past_online: '; var_dump ($users_past_online); echo '</pre>';
+
 
 foreach ($users_past_online as $current_past_online)
 		//while ($current_past_online = $db->fetch_assoc($result2))
 		{
-		//if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>$current_past_online: '; var_dump ($current_past_online); echo '</pre>';
-
 			++$count_row;
 			$jj_userid = $current_past_online['userid'];
 			$jj_userip = $current_past_online['userip'];
