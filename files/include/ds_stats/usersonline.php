@@ -1,6 +1,17 @@
 <?php
 //$Id$
 // Load the ds_stats.php language file
+/**
+ * 
+ * $all_users_online - Результат запроса из online
+ * $current_user_online - один из $all_users_online
+ * 
+ * 
+ * 
+ * 
+ * 
+ * */
+
 if (file_exists(PUN_ROOT.'lang/'.$pun_user['language'].'/ds_stats.php'))
 	require PUN_ROOT.'lang/'.$pun_user['language'].'/ds_stats.php';
 else
@@ -360,9 +371,19 @@ foreach ($users_past_online as $pun_user_online)
 		if ($current_user_online["user_id"] != 1) 
 		{
 			if (!isset($attended_ids[$current_user_online['user_id']])) 
-			{
-				//if($pun_user['g_id'] == PUN_ADMIN)	echo '<pre>'; var_dump ($current_user_online); echo '</pre>';
-				array_map('unlink', glob(FORUM_CACHE_DIR."cache_ds_stats_today_*.php"));
+			{	
+				// ЧИСТИМ КЭШ ВСЕМ ПОЯСАМ, КАК ТОЛЬКО ОБНАРУЖИЛИ НОВОЗАШЕДШЕГО
+				//array_map('unlink', glob(FORUM_CACHE_DIR."cache_ds_stats_today_*.php"));
+				// Пробуем удаялять только старые файлы, чтобы из разных часовых поясов не крошили друг другу кэш
+				// Скорее всего, если свежий, изменения уже есть у них, потому обойдутся без нашего prune.
+				$cache_files = glob(FORUM_CACHE_DIR."cache_ds_stats_today_*.php");
+				foreach ($cache_files as $cacheFile) {
+					if (is_file($cacheFile)) {
+						if (time() - filectime($cacheFile) >= 120) { // 120 sec
+							unlink($cacheFile);
+						}
+					}
+				}
 				generate_ds_stats_today_cache($todaystamp, $all_users_online, $current_user_online, $localUsersWeekDay, $diff_user_time);
 				include FORUM_CACHE_DIR.'cache_ds_stats_today_' . $diff_user_time . '.php';
 			}
