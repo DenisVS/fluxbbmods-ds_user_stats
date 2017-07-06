@@ -222,74 +222,75 @@ if (time() > ($past_timestamp + $ttl_past_cache))
   generate_ds_stats_past_cache($period_check, $period_unit, $ttl_past_cache);
 }
 
+if (isset($users_past_online) && !is_null($users_past_online) ) {
+  foreach ($users_past_online as $current_past_online)
+      //while ($current_past_online = $db->fetch_assoc($result2))
+      {
+        ++$count_row;
+        $jj_userid = $current_past_online['userid'];
+        $jj_userip = $current_past_online['userip'];
+        if ($jj_userip == $jj_userip_pre)
+        {
+          // For the first occurrence
+          if ($first_occur)
+          {
+            if ($jj_userid_pre == 1)
+              ++$count_guest;
+            else
+              ++$count_user;
+              $first_occur = 0;
+          }
+            if ($jj_userid == 1)
+            ++$count_guest;
+          else
+            ++$count_user;
 
-foreach ($users_past_online as $current_past_online)
-		//while ($current_past_online = $db->fetch_assoc($result2))
-		{
-			++$count_row;
-			$jj_userid = $current_past_online['userid'];
-			$jj_userip = $current_past_online['userip'];
-			if ($jj_userip == $jj_userip_pre)
-			{
-				// For the first occurrence
-				if ($first_occur)
-				{
-					if ($jj_userid_pre == 1)
-						++$count_guest;
-					else
-						++$count_user;
-						$first_occur = 0;
-				}
-					if ($jj_userid == 1)
-					++$count_guest;
-				else
-					++$count_user;
+          // Is last row's userip equals to second last row's userip?
+          if ($count_row == $num_entries_count)
+          {
+            if ($count_user == 0)
+              $deleteby = $count_guest-1;
+            else
+              $deleteby = $count_guest;
 
-				// Is last row's userip equals to second last row's userip?
-				if ($count_row == $num_entries_count)
-				{
-					if ($count_user == 0)
-						$deleteby = $count_guest-1;
-					else
-						$deleteby = $count_guest;
+            $num_guests_ot = $num_guests_ot - $deleteby;
+            list($count_guest, $count_user, $deleteby) = 0;		// Clear counters
+          }
+        }
+        else
+        {
+          if ($count_user > 0 || $count_guest > 0)
+          {
+            $first_occur = 1;
+            if ($count_user == 0)
+              $deleteby = $count_guest-1;
+            else
+              $deleteby = $count_guest;
 
-					$num_guests_ot = $num_guests_ot - $deleteby;
-					list($count_guest, $count_user, $deleteby) = 0;		// Clear counters
-				}
-			}
-			else
-			{
-				if ($count_user > 0 || $count_guest > 0)
-				{
-					$first_occur = 1;
-					if ($count_user == 0)
-						$deleteby = $count_guest-1;
-					else
-						$deleteby = $count_guest;
-
-					$num_guests_ot = $num_guests_ot - $deleteby;
-					$count_guest = $count_user = $deleteby = 0;	// Clear counters
-				}
-			}
-			if ($jj_userid == "1")
-			{
-				++$num_guests_ot;
-			}
-			else
-			{
-				if (!in_array($jj_userid, $jj_userids))
-				{
-					$jj_userids[] = $jj_userid;
-					$countj = $countj + 1;
-					$users_ot[$countj]["username"] = $current_past_online['username'];
-					$users_ot[$countj]["link"] = "\n\t\t\t\t".'<dd style="DISPLAY: inline; HEIGHT: 0"><a '.((isset($ds_stats_conf['group_color'][$current_past_online['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$current_past_online['group_id']].'" ' : '').'href="profile.php?id='.$current_past_online['userid'].'">'.pun_htmlspecialchars($current_past_online['username']).'</a>';
-				}
-			}
-			$jj_userid_pre = $jj_userid;
-			$jj_userip_pre = $jj_userip;
-		}
-		$num_users_ot = count($users_ot);
-
+            $num_guests_ot = $num_guests_ot - $deleteby;
+            $count_guest = $count_user = $deleteby = 0;	// Clear counters
+          }
+        }
+        if ($jj_userid == "1")
+        {
+          ++$num_guests_ot;
+        }
+        else
+        {
+          if (!in_array($jj_userid, $jj_userids))
+          {
+            $jj_userids[] = $jj_userid;
+            $countj = $countj + 1;
+            $users_ot[$countj]["username"] = $current_past_online['username'];
+            $users_ot[$countj]["link"] = "\n\t\t\t\t".'<dd style="DISPLAY: inline; HEIGHT: 0"><a '.((isset($ds_stats_conf['group_color'][$current_past_online['group_id']]) && $ds_stats_conf['topic_colors'] == '1') ? 'style="COLOR: #'.$ds_stats_conf['group_color'][$current_past_online['group_id']].'" ' : '').'href="profile.php?id='.$current_past_online['userid'].'">'.pun_htmlspecialchars($current_past_online['username']).'</a>';
+          }
+        }
+        $jj_userid_pre = $jj_userid;
+        $jj_userip_pre = $jj_userip;
+      }
+      $num_users_ot = count($users_ot);
+  } else $num_users_ot = 0;
+  
 	//########### PAST ONLINE END
 
 		echo '			<div class="clearer"></div>';
@@ -335,7 +336,7 @@ foreach ($users_past_online as $current_past_online)
 		{
 			$guests_ot_dsp = ($num_guests_ot == "1") ? $lang_usersonline['Guest single'] : $lang_usersonline['Guests plural'];
 			$users_ot_dsp = ($num_users_ot == "1") ? $lang_usersonline['Registered user single'] : $lang_usersonline['Registered users plural'];
-			echo "\t\t\t".'<dl id="pastonline" class= "clearb">'."\n\t\t\t\t".'<dt style="DISPLAY: inline; HEIGHT: 0"><strong>'.$period_string.':&nbsp;['.$num_guests_ot.'&nbsp;'.$guests_ot_dsp.', '.$num_users_ot.'&nbsp;'.$users_ot_dsp.']</strong></dt>'."\n\t\t\t".'</dl>'."\n";
+			echo "\t\t\t".'<dl id="pastonline" class= "clearb">'."\n\t\t\t\t".'<dt style="DISPLAY: inline; HEIGHT: 0">'.$period_string.':&nbsp;['.$num_guests_ot.'&nbsp;'.$guests_ot_dsp.', '.$num_users_ot.'&nbsp;'.$users_ot_dsp.']</dt>'."\n\t\t\t".'</dl>'."\n";
 		}
 	}
 	//########### USERS ONLINE TODAY 
