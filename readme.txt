@@ -88,7 +88,7 @@ if ($pun_user['g_id'] != PUN_ADMIN)
 #
 
 if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
-    require PUN_ROOT.'include/cache.php';
+    require PUN_ROOT.'include/ds_stats/cache.php';
 
 #
 #---------[ . FIND (line: ) ]---------------------------------------------
