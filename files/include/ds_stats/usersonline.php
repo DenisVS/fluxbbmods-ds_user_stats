@@ -131,6 +131,22 @@ require PUN_ROOT.'include/ds_stats/cache.php';
 	//########### PAST ONLINE START
 	if ($ds_stats_conf['past_online_enable'] && isset($ds_stats_conf['past_online_show'][$pun_user['group_id']]) && $ds_stats_conf['past_online_show'][$pun_user['group_id']] == 1)
 	{
+	
+    function unique_array_by_key($array, $key) { 
+      $temp_array = array(); 
+      $i = 0; 
+      $key_array = array(); 
+      foreach($array as $val) { 
+        if (!in_array($val[$key], $key_array)) { 
+          $key_array[$i] = $val[$key]; 
+          $temp_array[$i] = $val; 
+        } 
+        $i++; 
+      } 
+      return $temp_array; 
+    }
+	
+	
 		$num_guests_ot = 0;
 		$users_ot = array();
 		$period = substr($ds_stats_conf['past_online_time'], 0, -1);

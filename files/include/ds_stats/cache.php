@@ -9,20 +9,6 @@ if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
 function generate_ds_stats_today_cache($todaystamp, $online_list, $new_user, $localUsersWeekDay, $diff_user_time)
 {
 
-	function unique_array_by_key($array, $key) { 
-		$temp_array = array(); 
-		$i = 0; 
-		$key_array = array(); 
-		foreach($array as $val) { 
-			if (!in_array($val[$key], $key_array)) { 
-				$key_array[$i] = $val[$key]; 
-				$temp_array[$i] = $val; 
-			} 
-			$i++; 
-		} 
-		return $temp_array; 
-	}
-
 	global $db;
 
 	$result = $db->query('SELECT username, id, group_id, last_visit from '.$db->prefix.'users WHERE last_visit >= '.$todaystamp.' ORDER by last_visit DESC') or error('Unable to find the list of the users online today', __FILE__, __LINE__, $db->error());
