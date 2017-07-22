@@ -323,7 +323,19 @@ require PUN_ROOT.'include/ds_stats/userstats_track.php';  // Load userstats modu
 #---------[ . FIND (line: ) ]---------------------------------------------
 #
 
-list($stats['total_topics'], $stats['total_posts']) = array_map('intval', $db->fetch_row($result));
+if (!empty($forum_actions))
+{
+ 
+?>
+<div class="linksb">
+	<div class="inbox crumbsplus">
+		<p class="subscribelink clearb"><?php echo implode(' - ', $forum_actions); ?></p>
+	</div>
+</div>
+<?php
+ 
+}
+
 
 #
 #---------[ . AFTER, ADD ]---------------------------------------------------
