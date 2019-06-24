@@ -3,6 +3,22 @@
 if (!defined('FORUM_CACHE_FUNCTIONS_LOADED'))
     require PUN_ROOT.'include/cache.php';
 
+
+
+    function unique_array_by_key($array, $key) { 
+      $temp_array = array(); 
+      $i = 0; 
+      $key_array = array(); 
+      foreach($array as $val) { 
+        if (!in_array($val[$key], $key_array)) { 
+          $key_array[$i] = $val[$key]; 
+          $temp_array[$i] = $val; 
+        } 
+        $i++; 
+      } 
+      return $temp_array; 
+    }
+
 //
 // Generate the stats today cache PHP script
 //
@@ -28,6 +44,7 @@ if ($new_user != false)
 }
 
 
+    
 	$attended_today = unique_array_by_key($attended_today, 'id'); 
 
   // flipp array - get users tuday. Keys is ID.
