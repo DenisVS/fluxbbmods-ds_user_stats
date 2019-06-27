@@ -17,8 +17,8 @@ if (isset($ds_stats_conf['IP'][$_SERVER ['REMOTE_ADDR']])) $stopLog = true;
 
 if ($ds_stats_conf['stats_enabled'])
 {
-	if ($pun_user['is_bot']) 
-	{	
+	if ($pun_user['is_bot'])
+	{
 		if (isset($ds_stats_conf['bots'][$pun_user['is_bot']])) {
 			if ($ds_stats_conf['bots'][$pun_user['is_bot']] == 0) {$stopLog = true;}
 		} else {
@@ -36,7 +36,7 @@ if ($ds_stats_conf['stats_enabled'])
 		}
 	}
 	else
-	{	
+	{
 		require_once ('include/ua_parser/UserAgentParser.php');
 		$userInfo = parse_user_agent ($_SERVER['HTTP_USER_AGENT']);
 		$browser = $userInfo ['browser'].' '.$userInfo['version'];
@@ -55,12 +55,23 @@ if ($ds_stats_conf['stats_enabled'])
 		if (!isset($_SERVER['REQUEST_URI']))
 			$_SERVER['REQUEST_URI'] = (isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : '').'?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '');
 
-		if (isset($_SERVER['REQUEST_URI']) && ($_SERVER['REQUEST_URI'] != "")) 
+		if (isset($_SERVER['REQUEST_URI']) && ($_SERVER['REQUEST_URI'] != ""))
 		{
 		$js_uri = str_replace('ajax&', '', $_SERVER['REQUEST_URI']) ;
 		} else {$_SERVER['REQUEST_URI'] = 'unknown';}
+
 		// Step 9 - get country
-		$countryData = geoip_record_by_name($_SERVER ['REMOTE_ADDR']);
+		if  (function_exists('apache_request_headers'))	{
+			$headers = apache_request_headers();
+			if (isset($headers['COUNTRY_CODE']) && isset($headers['COUNTRY_NAME']) && isset($headers['CITY_NAME']))	{
+				$countryData['country_name'] = $headers['COUNTRY_NAME'];
+				$countryData['city'] = $headers['CITY_NAME'];
+			}
+		}
+		if (function_exists('geoip_record_by_name'))	{
+			$countryData = geoip_record_by_name($_SERVER ['REMOTE_ADDR']);
+		}
+
 		$country = $countryData['country_name'] .", ". $countryData['city'];
 		$result = $db->query('SELECT id FROM '.$db->prefix.'userstats ') or error('Unable to fetch userstats list for forum', __FILE__, __LINE__, $db->error());
 		$num_entries_count = $db->num_rows($result);
@@ -86,23 +97,23 @@ if ($ds_stats_conf['stats_enabled'])
 			// Delete some stats
 			$db->query('DELETE FROM '.$db->prefix.'userstats WHERE date<'.$del_date) or error('Unable to delete userstats', __FILE__, __LINE__, $db->error());
 		}
-		// Check if it was logged 120 seconds ago 
+		// Check if it was logged 120 seconds ago
 		//- we don't want to log consecutive visits (e.g. because of refresh) by the same user to the same page within a 120 second period
 		$result = $db->query('SELECT * FROM '.$db->prefix.'userstats WHERE userip=\''.$_SERVER ['REMOTE_ADDR'].'\' ORDER BY date DESC LIMIT 1') or error('Unable to fetch latest userstats entry', __FILE__, __LINE__, $db->error());
 		$userstats_latestentry = $db->fetch_assoc($result);
 		$userstats_check = (
-		$pun_user['id'] == $userstats_latestentry['userid'] && 
-		$_SERVER ['REMOTE_ADDR'] == $userstats_latestentry['userip'] && 
-		$js_uri == $userstats_latestentry['uri'] && 
-		$browser == $userstats_latestentry['browser'] && 
-		$opsys == $userstats_latestentry['opsys'] && 
-		$country == $userstats_latestentry['country'] && 
+		$pun_user['id'] == $userstats_latestentry['userid'] &&
+		$_SERVER ['REMOTE_ADDR'] == $userstats_latestentry['userip'] &&
+		$js_uri == $userstats_latestentry['uri'] &&
+		$browser == $userstats_latestentry['browser'] &&
+		$opsys == $userstats_latestentry['opsys'] &&
+		$country == $userstats_latestentry['country'] &&
 		((time()-$userstats_latestentry['date']) < 120)
 		) ? "1" : "0";
 
 		$SHR = explode('/',$_SERVER['HTTP_REFERER']);
 
-		if (! 
+		if (!
 			((end($SHR) == 'userstats.php') || ($userstats_check))
 			)
 		{
